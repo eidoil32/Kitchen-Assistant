@@ -1,5 +1,5 @@
 # Kitchen Assistant
-## Final year project by Ido Hayun, Lidor Tevet, Tim Buchbinder, Noam Cohen
+Final year project by Ido Hayun, Lidor Tevet, Tim Buchbinder, Noam Cohen
 
 ## Step 1:
 Created short description for the project.
