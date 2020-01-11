@@ -8,5 +8,5 @@ Created short description for the project.
 Creating an SRS Document
 
 ## Project Management:
-All new features and changes must upload to relation branch (AND NOT THE MASTER!),
+All new features and changes must upload to relation branch (AND NOT THE MASTER!).  
 After pushing changes -> creating an Pull-Request.
