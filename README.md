@@ -5,4 +5,4 @@
 Created short description for the project.
 
 ## Step 2:
-# Creating an SRS Document
+## Creating an SRS Document
