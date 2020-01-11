@@ -7,8 +7,6 @@ Created short description for the project.
 ## Step 2:
 Creating an SRS Document
 
-
-## Manging the project
-## Special branches
-1. 'Document': will contain all drafts, sketches and other documents about the project
-2. 'master': will contain the last version of the application.
+## Project Management:
+All new features and changes must upload to relation branch (AND NOT THE MASTER!).  
+After pushing changes -> creating an Pull-Request.
