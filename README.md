@@ -1,3 +1,4 @@
+![](https://raw.githubusercontent.com/eidoil32/Kitchen-Assistant/master/documents/images/KitchAS.png | width=100)
 # Kitchen Assistant
 Final year project by Ido Hayun, Lidor Tevet, Tim Buchbinder, Noam Cohen
 
