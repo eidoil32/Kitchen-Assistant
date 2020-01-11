@@ -1,4 +1,4 @@
-![Image](master/documents/images/KitchAS.png?raw=true | width=100)
+![header image](https://github.com/eidoil32/Kitchen-Assistant/blob/master/documents/images/Logo.png)
 # Kitchen Assistant
 Final year project by Ido Hayun, Lidor Tevet, Tim Buchbinder, Noam Cohen
 
