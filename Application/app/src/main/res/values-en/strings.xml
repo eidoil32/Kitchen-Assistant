@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">KitchenAssistant</string>
     <string name="PERMISSION_NOT_GRANTED">Not permission is granted, cannot start detection!</string>
     <string name="CAMERA_FOUND">Camera found</string>
     <string name="CAMERA_NOT_FOUND">No camera available</string>
