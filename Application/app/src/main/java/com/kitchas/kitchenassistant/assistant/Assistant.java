@@ -17,6 +17,10 @@ public class Assistant {
         return kitchenAssistant;
     }
 
+    public void start() {
+
+    }
+
     private void startListening() {
         voce.SpeechInterface.setRecognizerEnabled(true);
     }

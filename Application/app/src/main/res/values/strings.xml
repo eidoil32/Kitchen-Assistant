@@ -11,4 +11,6 @@
     <string name="login_btn_sign_up">sign up</string>
     <string name="login_text_field_email">Your email</string>
     <string name="login_text_field_password">Enter password</string>
+    <string name="EMPTY_EMAIL_PASSWORD">Email or Password cannot be empty</string>
+    <string name="EMAIL_OR_PASSWORD_INVALID">Email or Password is invalid</string>
 </resources>
