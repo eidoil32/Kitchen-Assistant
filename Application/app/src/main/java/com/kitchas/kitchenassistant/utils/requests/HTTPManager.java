@@ -10,6 +10,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.kitchas.kitchenassistant.utils.Settings;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class HTTPManager {
@@ -34,14 +35,19 @@ public class HTTPManager {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (null != response) {
-                            success_callback.onResponse();
+                            success_callback.onResponse(response);
                         }
                     }
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                error_callback.onResponse();
+                try {
+                    JSONObject object = new JSONObject(error.getMessage() == null ? "" : error.getMessage());
+                    error_callback.onResponse(object);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         queue.add(request);

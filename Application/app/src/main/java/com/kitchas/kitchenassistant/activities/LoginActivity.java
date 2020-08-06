@@ -1,8 +1,6 @@
 package com.kitchas.kitchenassistant.activities;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -10,11 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.assistant.user.User;
-import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.requests.API;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
-import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
 
 import org.json.JSONObject;
 
@@ -23,6 +19,7 @@ import java.util.Map;
 
 public abstract class LoginActivity extends AppCompatActivity {
     protected User user;
+    protected JSONObject response;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +63,16 @@ public abstract class LoginActivity extends AppCompatActivity {
                 httpManager.POSTRequest(
                         "user/login",
                         new JSONObject(parameters),
-                        this::OnUserLoggedIn, () -> {
+                        this::onSuccessLoggedIn, (response) -> {
                             error.setText(getString(R.string.EMAIL_OR_PASSWORD_INVALID));
                         });
             }
         });
+    }
+
+    private void onSuccessLoggedIn(JSONObject response) {
+        this.response = response;
+        OnUserLoggedIn();
     }
 
     abstract protected void OnUserLoggedIn();
