@@ -13,4 +13,6 @@
     <string name="login_text_field_password">Enter password</string>
     <string name="EMPTY_EMAIL_PASSWORD">Email or Password cannot be empty</string>
     <string name="EMAIL_OR_PASSWORD_INVALID">Email or Password is invalid</string>
+    <string name="UNKNOWN_ERROR">Unknown error, please try again later</string>
+    <string name="EMAIL_PASSWORD_INCORRECT">Email or Password is incorrect</string>
 </resources>

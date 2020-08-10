@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 public class MainActivity extends LoginActivity {
     @Override
-    protected void OnUserLoggedIn(JSONObject response) {
-
+    protected void OnUserLoggedIn() {
+        System.out.println("In main activity");
     }
 }
