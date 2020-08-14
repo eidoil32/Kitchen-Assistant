@@ -50,20 +50,16 @@ public abstract class ImageProcessing {
      * @return Integer array representing an HSL pixel.
      */
     public static int[] convertToHSL(int r, int g, int b) {
-        float red = r / 255;
-        float green = g / 255;
-        float blue = b / 255;
+        float red = r / 255f;
+        float green = g / 255f;
+        float blue = b / 255f;
 
         float minComponent = Math.min(red, Math.min(green, blue));
         float maxComponent = Math.max(red, Math.max(green, blue));
         float range = maxComponent - minComponent;
-        float h = 0, s = 0, l = 0;
+        float h = 0, s = 0, l = (maxComponent + minComponent) / 2;
 
-        l = (maxComponent + minComponent) / 2;
-
-        if (range == 0) { // Monochrome image
-            h = s = 0;
-        } else {
+        if (range != 0) {
             s = (l > 0.5) ? range / (2 - range) : range / (maxComponent + minComponent);
 
             if (red == maxComponent) {

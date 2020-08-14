@@ -3,15 +3,21 @@ package com.kitchas.kitchenassistant.activities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import com.google.android.material.textfield.TextInputLayout;
 
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.assistant.user.User;
+import com.kitchas.kitchenassistant.utils.CustomTextWatcher;
 import com.kitchas.kitchenassistant.utils.GeneralException;
+import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class LoginActivity extends BaseActivity {
     protected JSONObject response;
@@ -30,6 +36,9 @@ public abstract class LoginActivity extends BaseActivity {
         if (User.isLoggedIn()) {
             OnUserLoggedIn();
         } else {
+            try {
+                this.getSupportActionBar().hide();
+            } catch (NullPointerException ignored) { }
             setContentView(R.layout.activity_login);
             loginScreen();
         }
@@ -50,10 +59,11 @@ public abstract class LoginActivity extends BaseActivity {
     }
 
     abstract protected void OnUserLoggedIn();
+
     protected void setErrorMessage(JSONObject response) {
         final TextView error = findViewById(R.id.login_error);
         try {
-            int resId = getResources().getIdentifier(response.getString("error") , "string", getPackageName());
+            int resId = getResources().getIdentifier(response.getString("error"), "string", getPackageName());
             if (resId != 0) {
                 error.setText(getString(resId));
             } else {
@@ -65,27 +75,55 @@ public abstract class LoginActivity extends BaseActivity {
         }
     }
 
-    private void login(View view) {
-        final TextView email_textView = findViewById(R.id.login_user_email);
-        final TextView password_textView = findViewById(R.id.login_user_password);
+    private String[] getEmailPassword() {
+        Map<TextInputLayout, String> errors = new HashMap<>();
+        final TextInputLayout input_email = findViewById(R.id.login_user_email);
+        final TextInputLayout input_password = findViewById(R.id.login_user_password);
 
-        User.login(email_textView.getText().toString(),
-                password_textView.getText().toString(),
-                this::onSuccessLoggedIn,
-                this::setErrorMessage,
-                this
-        );
+        EditText email = input_email.getEditText(),
+                password = input_password.getEditText();
+
+        if (email != null && email.getText().toString().isEmpty()) {
+            errors.put(input_email, getString(R.string.EMPTY_EMAIL));
+            email.addTextChangedListener((CustomTextWatcher) () -> input_email.setError(null));
+        }
+
+        if (password != null && password.getText().toString().isEmpty()) {
+            errors.put(input_password, getString(R.string.EMPTY_PASSWORD));
+            password.addTextChangedListener((CustomTextWatcher) () -> input_password.setError(null));
+        }
+
+        if (errors.isEmpty()) { // email is not null && password is not null!
+            return new String[]{email.getText().toString(), password.getText().toString()};
+        } else {
+            Tools.ShowInputErrors(errors);
+        }
+
+        return null;
+    }
+
+    private void login(View view) {
+        String[] values = getEmailPassword();
+
+        if (values != null) { // email is not null && password is not null!
+            User.login(values[0],
+                    values[1],
+                    this::onSuccessLoggedIn,
+                    this::setErrorMessage,
+                    this);
+        }
     }
 
     private void register(View view) {
-        final TextView email_textView = findViewById(R.id.login_user_email);
-        final TextView password_textView = findViewById(R.id.login_user_password);
+        String[] values = getEmailPassword();
 
-        User.register(email_textView.getText().toString(),
-                password_textView.getText().toString(),
-                this::onSuccessLoggedIn,
-                this::setErrorMessage,
-                this
-        );
+        if (values != null) { // email is not null && password is not null!
+            User.register(values[0],
+                    values[1],
+                    this::onSuccessLoggedIn,
+                    this::setErrorMessage,
+                    this
+            );
+        }
     }
 }

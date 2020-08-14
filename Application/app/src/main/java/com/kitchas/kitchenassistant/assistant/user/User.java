@@ -3,6 +3,7 @@ package com.kitchas.kitchenassistant.assistant.user;
 import android.content.Context;
 
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.utils.Settings;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.requests.API;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
@@ -41,12 +42,12 @@ public class User extends Base {
             Map<String, String> parameters = new HashMap<>();
             parameters.put(API.API_KEY_PASSWORD, password);
             parameters.put(API.API_KEY_EMAIL, email);
-            System.out.println(parameters);
             httpManager.POSTRequest(
                     "user/login",
                     parameters,
                     response -> {
                         createUserInstance(response, error_callback);
+                        System.out.println(User.getInstance().getEmail());
                         success_callback.onResponse(response);
                     },
                     error_callback
@@ -67,7 +68,6 @@ public class User extends Base {
             Map<String, String> parameters = new HashMap<>();
             parameters.put(API.API_KEY_PASSWORD, password);
             parameters.put(API.API_KEY_EMAIL, email);
-            System.out.println(parameters);
             httpManager.POSTRequest(
                     "user/register",
                     parameters,
@@ -79,11 +79,11 @@ public class User extends Base {
 
     private static void createUserInstance(JSONObject user_data, IOnRequest error_callback) {
         try {
-            instance.setData(user_data);
-        } catch (JSONException e) {
+            getInstance().setData(user_data);
+        } catch (Exception e) {
             try {
-                error_callback.onResponse(new JSONObject("SET_USER_DATA_FAILED"));
-            } catch (JSONException ex) {
+                error_callback.onResponse(Settings.UNKNOWN_ERROR);
+            } catch (Exception ex) {
                 System.out.println("JSON Object creation failed");
             }
         }
@@ -91,5 +91,13 @@ public class User extends Base {
 
     public void setData(JSONObject user_data) throws JSONException {
         this.email = user_data.getString("email");
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

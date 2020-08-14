@@ -15,4 +15,7 @@
     <string name="EMAIL_OR_PASSWORD_INVALID">Email or Password is invalid</string>
     <string name="UNKNOWN_ERROR">Unknown error, please try again later</string>
     <string name="EMAIL_PASSWORD_INCORRECT">Email or Password is incorrect</string>
+    <string name="USER_ALREADY_EXISTS">User already exists</string>
+    <string name="EMPTY_EMAIL">Email cannot be empty</string>
+    <string name="EMPTY_PASSWORD">Password cannot be empty</string>
 </resources>

@@ -45,11 +45,11 @@ public class HTTPManager {
                     }
                 },
                 error -> {
-                    String s = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                     try {
+                        String s = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                         JSONObject object = new JSONObject(s);
                         error_callback.onResponse(object);
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         error_callback.onResponse(Settings.UNKNOWN_ERROR);
                     }
         }){

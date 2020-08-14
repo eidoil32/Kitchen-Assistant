@@ -15,4 +15,16 @@
     <string name="EMAIL_OR_PASSWORD_INVALID">Email or Password is invalid</string>
     <string name="UNKNOWN_ERROR">Unknown error, please try again later</string>
     <string name="EMAIL_PASSWORD_INCORRECT">Email or Password is incorrect</string>
+    <string name="USER_ALREADY_EXISTS">User already exists</string>
+    <string name="EMPTY_EMAIL">Email cannot be empty</string>
+    <string name="EMPTY_PASSWORD">Password cannot be empty</string>
+    <string name="title_activity_application">Application</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

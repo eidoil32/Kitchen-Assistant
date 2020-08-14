@@ -3,6 +3,7 @@ package com.kitchas.kitchenassistant.motion.motiondetection.motiondetection;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraManager;
 import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -79,6 +80,7 @@ public class MotionDetector {
     private MotionDetectorThread worker;
 
     private Camera mCamera;
+    private CameraManager cameraManager;
     private boolean inPreview;
     private SurfaceHolder previewHolder;
     private Context mContext;
@@ -137,6 +139,7 @@ public class MotionDetector {
     }
 
     private Camera getCameraInstance(){
+
         Camera c = null;
 
         try {
