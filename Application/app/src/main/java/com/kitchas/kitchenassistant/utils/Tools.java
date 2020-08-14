@@ -15,4 +15,8 @@ public class Tools {
             error.getKey().setError(error.getValue());
         }
     }
+
+    public static int getCurrentTimeStamp() {
+        return (int) ((int)System.currentTimeMillis() / 1000L);
+    }
 }
