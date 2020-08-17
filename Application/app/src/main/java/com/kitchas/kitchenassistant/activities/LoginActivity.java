@@ -1,10 +1,13 @@
 package com.kitchas.kitchenassistant.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.material.textfield.TextInputLayout;
 
 import com.kitchas.kitchenassistant.R;
@@ -14,38 +17,44 @@ import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity {
     protected JSONObject response;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
+            this.user = User.getInstance(this);
             init();
         } catch (Exception e) {
             // TODO - show error message
         }
     }
 
+    private void OnUserLoggedIn() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
     private void init() {
-        if (User.isLoggedIn()) {
-            OnUserLoggedIn();
+        if (this.user.isLoggedIn()) {
+            this.OnUserLoggedIn();
         } else {
-            try {
-                this.getSupportActionBar().hide();
-            } catch (NullPointerException ignored) { }
+            Tools.hideTopBar(this);
             setContentView(R.layout.activity_login);
             loginScreen();
         }
     }
 
     private void loginScreen() {
-        final HTTPManager httpManager = new HTTPManager(this.getApplicationContext());
         final Button login = findViewById(R.id.login_btn_sign_in);
         login.setOnClickListener(this::login);
 
@@ -54,11 +63,16 @@ public abstract class LoginActivity extends BaseActivity {
     }
 
     private void onSuccessLoggedIn(JSONObject response) {
-        this.response = response;
-        OnUserLoggedIn();
+        try {
+            this.user.setData(response);
+            //this.user.saveToLocal(this, response.getString("TOKEN"));
+            this.user.saveToLocal(this);
+            Toast.makeText(this, R.string.TOAST_LOGGED_IN_SUCCESSFULLY, Toast.LENGTH_LONG).show();
+            OnUserLoggedIn();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
-
-    abstract protected void OnUserLoggedIn();
 
     protected void setErrorMessage(JSONObject response) {
         final TextView error = findViewById(R.id.login_error);

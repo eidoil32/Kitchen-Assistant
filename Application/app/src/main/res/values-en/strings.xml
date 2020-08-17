@@ -18,4 +18,25 @@
     <string name="USER_ALREADY_EXISTS">User already exists</string>
     <string name="EMPTY_EMAIL">Email cannot be empty</string>
     <string name="EMPTY_PASSWORD">Password cannot be empty</string>
+    <string name="TOAST_LOGGED_IN_SUCCESSFULLY">Welcome! You logged in successfully</string>
+
+    <string name="title_activity_application">Application</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- Main activity layout strings -->
+    <string name="MAIN_PROFILE_TAB_LABEL">Profile</string>
+    <string name="MAIN_FAVORITE_TAB_LABEL">Favorite</string>
+    <string name="MAIN_COMMUNITY_TAB_LABEL">Community</string>
+    <string name="MAIN_HOME_TAB_LABEL">Home</string>
+    <string name="SEARCH">Search</string>
+    <string name="MENU_DRAWER">Menu drawer</string>
+    <string name="SHOW_MORE">Show more</string>
+    <string name="RECIPE_IMAGE">Recipe Image</string>
 </resources>

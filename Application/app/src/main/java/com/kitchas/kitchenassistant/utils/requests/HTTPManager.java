@@ -11,33 +11,76 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Settings;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class HTTPManager {
-    private Context context;
+    private static class Token {
+        public String _token;
+        private static Token instance;
 
-    public HTTPManager(Context context) {
-        this.context = context;
+        public static Token getInstance() throws GeneralException {
+            if (instance == null) {
+                throw new GeneralException("TOKEN_NOT_EXISTS");
+            }
+
+            return instance;
+        }
+
+        public static Token getInstance(String token) {
+            if (instance == null) {
+                instance = new Token(token);
+            }
+
+            if (token != null && !token.equals(instance.getToken())) {
+                return null;
+            }
+
+            return instance;
+        }
+
+        private Token(String token) {
+            this._token = token;
+        }
+
+        public String getToken() {
+            return _token;
+        }
+    }
+    private static HTTPManager instance;
+    private Token token;
+
+    public static HTTPManager getInstance() {
+        if (instance == null) {
+            instance = new HTTPManager();
+        }
+
+        return instance;
     }
 
-    public void POSTRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback) {
-        this.sendHTTPRequest(endpoint, parameters, Request.Method.POST, success_callback, error_callback);
+    private HTTPManager() { }
+
+    public void setToken(String token) {
+        //this.token = Token.getInstance(token);
     }
 
-    public void GETRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback) {
-        this.sendHTTPRequest(endpoint, parameters, Request.Method.GET, success_callback, error_callback);
+    public void POSTRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback, Context context) {
+        this.sendHTTPRequest(endpoint, parameters, Request.Method.POST, success_callback, error_callback, context);
     }
 
-    private void sendHTTPRequest(String endpoint, Map<String, String> parameters, int method, final IOnRequest success_callback, final IOnRequest error_callback) {
-        RequestQueue queue = Volley.newRequestQueue(this.context);
+    public void GETRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback, Context context) {
+        this.sendHTTPRequest(endpoint, parameters, Request.Method.GET, success_callback, error_callback, context);
+    }
+
+    private void sendHTTPRequest(String endpoint, Map<String, String> parameters, int method, final IOnRequest success_callback, final IOnRequest error_callback, Context context) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        if (token != null)
+            parameters.put("TOKEN", this.token.getToken());
         JsonObjectRequest request = new JsonObjectRequest(method, Settings.SERVER_URL + endpoint, new JSONObject(parameters),
                 response -> {
                     if (null != response) {

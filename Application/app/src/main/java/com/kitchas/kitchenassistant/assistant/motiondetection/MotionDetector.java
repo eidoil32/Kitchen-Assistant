@@ -6,6 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import com.kitchas.kitchenassistant.utils.callbacks.IErrorCallback;
+
 public class MotionDetector {
     private SensorManager sensorManager;
     private Sensor proximitySensor;
@@ -34,5 +36,14 @@ public class MotionDetector {
         };
 
         this.sensorManager.registerListener(listener, proximitySensor, 2 * 1000 * 1000);
+    }
+
+    public static void ActiveMotionDetector(Context context, ICallback detectedMovement, IErrorCallback errorCallback) {
+        try {
+            MotionDetector motionDetector = new MotionDetector(context);
+            motionDetector.detectMovement(detectedMovement);
+        } catch (Exception e) {
+            errorCallback.error(e);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.kitchas.kitchenassistant.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -9,7 +10,7 @@ import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.PermissionHelper;
 
-abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

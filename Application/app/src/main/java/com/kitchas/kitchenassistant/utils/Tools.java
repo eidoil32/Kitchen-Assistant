@@ -1,4 +1,6 @@
 package com.kitchas.kitchenassistant.utils;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -18,5 +20,11 @@ public class Tools {
 
     public static int getCurrentTimeStamp() {
         return (int) ((int)System.currentTimeMillis() / 1000L);
+    }
+
+    public static void hideTopBar(AppCompatActivity activity) {
+        try {
+            activity.getSupportActionBar().hide();
+        } catch (NullPointerException ignored) { }
     }
 }

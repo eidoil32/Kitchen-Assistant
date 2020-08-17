@@ -6,6 +6,7 @@ android {
 
     repositories {
         maven { url 'https://maven.fabric.io/public' }
+        maven { url "https://jitpack.io" }
     }
 
     defaultConfig {
@@ -32,9 +33,7 @@ android {
 
 buildscript {
     repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath "gradle.plugin.com.cherryperry.gfe:gradle-file-encrypt:1.4.0"
@@ -53,10 +52,14 @@ dependencies {
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
+    implementation 'androidx.wear:wear:1.0.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.material:material:1.2.0'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.camerakit:camerakit:1.0.0-beta3.11'
     implementation 'com.camerakit:jpegkit:0.1.0'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    compileOnly 'com.google.android.wearable:wearable:2.5.0'
 }

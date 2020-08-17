@@ -2,9 +2,9 @@ package com.kitchas.kitchenassistant.assistant.models.recipe;
 
 public class Tag {
     private String title;
-    private int id;
+    private String id;
 
-    public Tag(String title, int id) {
+    public Tag(String title, String id) {
         this.title = title;
         this.id = id;
     }
@@ -17,11 +17,11 @@ public class Tag {
         this.title = title;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 }

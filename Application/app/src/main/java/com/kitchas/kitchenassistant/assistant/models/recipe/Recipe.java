@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Recipe {
+    private String id;
     private List<Ingredient> ingredients;
     private List<Tag> tags;
     private User creator;

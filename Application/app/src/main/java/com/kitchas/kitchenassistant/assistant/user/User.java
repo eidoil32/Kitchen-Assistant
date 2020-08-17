@@ -1,10 +1,16 @@
 package com.kitchas.kitchenassistant.assistant.user;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.utils.Settings;
+import com.kitchas.kitchenassistant.assistant.Base;
 import com.kitchas.kitchenassistant.utils.Tools;
+import com.kitchas.kitchenassistant.utils.database.SQLHelper;
 import com.kitchas.kitchenassistant.utils.requests.API;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
@@ -12,25 +18,44 @@ import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 public class User extends Base {
+    public static String DB_IDENTIFY = "USER_DATA";
+
     public static User instance;
-    private String email, password;
+    private String email;
+    private boolean logged_in = false;
 
-    private User() {}
+    private User(Context context) {
+        this.logged_in = readFromLocal(context);
+    }
 
-    public static User getInstance() {
+    private boolean readFromLocal(Context context) {
+        SQLHelper database = new SQLHelper(context);
+        String user_data = database.getData(DB_IDENTIFY);
+        if (user_data != null) {
+            this.setData(user_data);
+            return true;
+        }
+        return false;
+    }
+
+    public static User getInstance(Context context) {
         if (instance == null) {
-            instance = new User();
+            instance = new User(context);
         }
 
         return instance;
     }
 
+    public boolean isLoggedIn() {
+        return this.logged_in;
+    }
+
     public static void login(String email, String password, IOnRequest success_callback, IOnRequest error_callback, Context context) {
-        HTTPManager httpManager = new HTTPManager(context);
         if ((email.isEmpty()) || password.isEmpty()) {
             try {
                 error_callback.onResponse(new JSONObject(context.getString(R.string.EMPTY_EMAIL_PASSWORD)));
@@ -42,21 +67,17 @@ public class User extends Base {
             Map<String, String> parameters = new HashMap<>();
             parameters.put(API.API_KEY_PASSWORD, password);
             parameters.put(API.API_KEY_EMAIL, email);
-            httpManager.POSTRequest(
+            HTTPManager.getInstance().POSTRequest(
                     "user/login",
                     parameters,
-                    response -> {
-                        createUserInstance(response, error_callback);
-                        System.out.println(User.getInstance().getEmail());
-                        success_callback.onResponse(response);
-                    },
-                    error_callback
+                    success_callback,
+                    error_callback,
+                    context
             );
         }
     }
 
     public static void register(String email, String password, IOnRequest success_callback, IOnRequest error_callback, Context context) {
-        HTTPManager httpManager = new HTTPManager(context);
         if ((email.isEmpty()) || password.isEmpty()) {
             try {
                 error_callback.onResponse(new JSONObject(context.getString(R.string.EMPTY_EMAIL_PASSWORD)));
@@ -68,24 +89,13 @@ public class User extends Base {
             Map<String, String> parameters = new HashMap<>();
             parameters.put(API.API_KEY_PASSWORD, password);
             parameters.put(API.API_KEY_EMAIL, email);
-            httpManager.POSTRequest(
+            HTTPManager.getInstance().POSTRequest(
                     "user/register",
                     parameters,
                     success_callback,
-                    error_callback
+                    error_callback,
+                    context
             );
-        }
-    }
-
-    private static void createUserInstance(JSONObject user_data, IOnRequest error_callback) {
-        try {
-            getInstance().setData(user_data);
-        } catch (Exception e) {
-            try {
-                error_callback.onResponse(Settings.UNKNOWN_ERROR);
-            } catch (Exception ex) {
-                System.out.println("JSON Object creation failed");
-            }
         }
     }
 
@@ -93,11 +103,23 @@ public class User extends Base {
         this.email = user_data.getString("email");
     }
 
-    public String getEmail() {
-        return email;
+    public void setData(String user_data_json) {
+        Type empMapType = new TypeToken<Map<String, String>>() {}.getType();
+        Map<String, String> user_data = new Gson().fromJson(user_data_json, empMapType);
+        this.email = user_data.get("email");
     }
 
-    public String getPassword() {
-        return password;
+    //public void saveToLocal(Context context, String token) {
+    public void saveToLocal(Context context) {
+        Map<String, String> user_data = new HashMap<>();
+        user_data.put("email", this.email);
+        //user_data.put("TOKEN", token);
+
+        SQLHelper database = new SQLHelper(context);
+        long newRowId = database.insertData(user_data, DB_IDENTIFY);
+        if (newRowId != 0) {
+            this.logged_in = true;
+            //HTTPManager.getInstance().setToken(token);
+        }
     }
 }
