@@ -2,6 +2,7 @@ package com.kitchas.kitchenassistant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,7 +12,9 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.user.User;
+import com.kitchas.kitchenassistant.assistant.voicedetection.TextToSpeechManager;
 import com.kitchas.kitchenassistant.utils.CustomTextWatcher;
 import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Tools;
@@ -116,6 +119,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void login(View view) {
+        TextToSpeechManager textToSpeechManager = TextToSpeechManager.getInstance();
+        textToSpeechManager.speak(this, "Hello World!");
         String[] values = getEmailPassword();
 
         if (values != null) { // email is not null && password is not null!

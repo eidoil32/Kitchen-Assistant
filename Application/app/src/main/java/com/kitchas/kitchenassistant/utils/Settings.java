@@ -12,6 +12,7 @@ public class Settings {
     public static final String ENV = "DEV";
     public static final int CAMERA_PERMISSION_REQUEST = 0;
     public static final Map<String, String> PERMISSION_ARRAY = new HashMap<>();
+
     static {
         PERMISSION_ARRAY.put(Manifest.permission.CAMERA, "To wakeup the Assistant");
         PERMISSION_ARRAY.put(Manifest.permission.RECORD_AUDIO, "To talking with the assistant");

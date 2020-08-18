@@ -17,6 +17,7 @@ import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
+import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
@@ -65,6 +66,12 @@ public class MainActivity extends BaseActivity
                 System.out.println("Selected recipe: " + recipe.getTitle());
             }
         });
+    }
+
+    @Override
+    protected void speechResult(String query) {
+        System.out.println(query);
+        // Todo implement speechResults
     }
 
     private List<Recipe> getExampleRecipes() {
