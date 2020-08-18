@@ -66,7 +66,7 @@ public class HTTPManager {
     private HTTPManager() { }
 
     public void setToken(String token) {
-        //this.token = Token.getInstance(token);
+        this.token = Token.getInstance(token);
     }
 
     public void POSTRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback, Context context) {

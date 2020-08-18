@@ -65,8 +65,7 @@ public class LoginActivity extends BaseActivity {
     private void onSuccessLoggedIn(JSONObject response) {
         try {
             this.user.setData(response);
-            //this.user.saveToLocal(this, response.getString("TOKEN"));
-            this.user.saveToLocal(this);
+            this.user.saveToLocal(this, response.getString("TOKEN"));
             Toast.makeText(this, R.string.TOAST_LOGGED_IN_SUCCESSFULLY, Toast.LENGTH_LONG).show();
             OnUserLoggedIn();
         } catch (JSONException e) {

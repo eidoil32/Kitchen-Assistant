@@ -61,5 +61,4 @@ dependencies {
     implementation 'com.camerakit:jpegkit:0.1.0'
     implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
     implementation 'com.google.code.gson:gson:2.8.6'
-    compileOnly 'com.google.android.wearable:wearable:2.5.0'
 }

@@ -68,7 +68,7 @@ public class User extends Base {
             parameters.put(API.API_KEY_PASSWORD, password);
             parameters.put(API.API_KEY_EMAIL, email);
             HTTPManager.getInstance().POSTRequest(
-                    "user/login",
+                    "users/login",
                     parameters,
                     success_callback,
                     error_callback,
@@ -90,7 +90,7 @@ public class User extends Base {
             parameters.put(API.API_KEY_PASSWORD, password);
             parameters.put(API.API_KEY_EMAIL, email);
             HTTPManager.getInstance().POSTRequest(
-                    "user/register",
+                    "users/register",
                     parameters,
                     success_callback,
                     error_callback,
@@ -109,17 +109,16 @@ public class User extends Base {
         this.email = user_data.get("email");
     }
 
-    //public void saveToLocal(Context context, String token) {
-    public void saveToLocal(Context context) {
+    public void saveToLocal(Context context, String token) {
         Map<String, String> user_data = new HashMap<>();
         user_data.put("email", this.email);
-        //user_data.put("TOKEN", token);
+        user_data.put("TOKEN", token);
 
         SQLHelper database = new SQLHelper(context);
         long newRowId = database.insertData(user_data, DB_IDENTIFY);
         if (newRowId != 0) {
             this.logged_in = true;
-            //HTTPManager.getInstance().setToken(token);
+            HTTPManager.getInstance().setToken(token);
         }
     }
 }
