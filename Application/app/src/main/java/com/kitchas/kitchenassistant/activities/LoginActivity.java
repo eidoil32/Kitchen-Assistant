@@ -119,8 +119,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void login(View view) {
-        TextToSpeechManager textToSpeechManager = TextToSpeechManager.getInstance();
-        textToSpeechManager.speak(this, "Hello World!");
         String[] values = getEmailPassword();
 
         if (values != null) { // email is not null && password is not null!
