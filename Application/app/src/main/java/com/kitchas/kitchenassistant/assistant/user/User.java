@@ -111,6 +111,7 @@ public class User extends Base {
         Type empMapType = new TypeToken<Map<String, String>>() {}.getType();
         Map<String, String> user_data = new Gson().fromJson(user_data_json, empMapType);
         this.email = user_data.get("email");
+        HTTPManager.getInstance().setToken(user_data.get("TOKEN"));
     }
 
     public void saveToLocal(Context context, String token) {
