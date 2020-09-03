@@ -24,7 +24,8 @@ public class TextToSpeechManager implements TextToSpeech.OnInitListener {
     }
 
     public void speak(Context context, String text) {
-        this.textToSpeech = new TextToSpeech(context, this);
+        this.textToSpeech = new
+                TextToSpeech(context, this);
         textToSpeech.setSpeechRate(pitch);
         textToSpeech.setSpeechRate(speech);
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null); //QUEUE_ADD

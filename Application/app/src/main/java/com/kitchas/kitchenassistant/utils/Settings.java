@@ -18,14 +18,7 @@ public class Settings {
         PERMISSION_ARRAY.put(Manifest.permission.RECORD_AUDIO, "To talking with the assistant");
         PERMISSION_ARRAY.put(Manifest.permission.INTERNET, "To connect to our database and network");
     }
-    public static String SERVER_URL;
-    static {
-        if (!ENV.equals("DEV")) {
-            SERVER_URL = "https://kitchen-assistant.herokuapp.com/api/";
-        } else {
-            SERVER_URL = "http://77.127.6.12:3000/api/";
-        }
-    }
+    public static String SERVER_URL = "https://kitchen-assistant.herokuapp.com/api/";
 
     public static JSONObject UNKNOWN_ERROR;
     static {

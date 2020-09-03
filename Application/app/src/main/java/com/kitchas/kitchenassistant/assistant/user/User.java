@@ -77,20 +77,24 @@ public class User extends Base {
         }
     }
 
-    public static void register(String email, String password, IOnRequest success_callback, IOnRequest error_callback, Context context) {
-        if ((email.isEmpty()) || password.isEmpty()) {
+    public static void register(String[] params, IOnRequest success_callback, IOnRequest error_callback, Context context) {
+        if ((params[0].isEmpty()) || params[1].isEmpty()) {
             try {
                 error_callback.onResponse(new JSONObject(context.getString(R.string.EMPTY_EMAIL_PASSWORD)));
             } catch (JSONException e) {
                 System.out.println(e.getMessage());
             }
         } else {
+            String password = params[1];
+            String name = params[2];
+            String email = params[0];
             password = Tools.encrypt(password);
             Map<String, String> parameters = new HashMap<>();
             parameters.put(API.API_KEY_PASSWORD, password);
             parameters.put(API.API_KEY_EMAIL, email);
+            parameters.put(API.API_KEY_NAME, name);
             HTTPManager.getInstance().POSTRequest(
-                    "users/register",
+                    "users",
                     parameters,
                     success_callback,
                     error_callback,

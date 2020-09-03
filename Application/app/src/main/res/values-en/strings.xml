@@ -39,4 +39,8 @@
     <string name="MENU_DRAWER">Menu drawer</string>
     <string name="SHOW_MORE">Show more</string>
     <string name="RECIPE_IMAGE">Recipe Image</string>
+    <string name="CANCEL_BTN">Cancel</string>
+    <string name="NEXT_BTN">Next</string>
+    <string name="SET_NAME_INPUT_HELPER">Or we can call you %1$s?</string>
+    <string name="SET_NAME_DIALOG_CONTENT">How do you want us to call you?</string>
 </resources>

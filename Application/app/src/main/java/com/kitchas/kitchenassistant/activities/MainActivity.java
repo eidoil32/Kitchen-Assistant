@@ -12,6 +12,7 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
@@ -27,11 +28,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity
-        implements MaterialSearchBar.OnSearchActionListener {
+        implements MaterialSearchBar.OnSearchActionListener,
+                    SwipeRefreshLayout.OnRefreshListener {
     private MaterialSearchBar search_bar;
     private DrawerLayout drawer;
     private User user = null;
     private ImageView search_icon_view;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private BaseAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,8 +61,8 @@ public class MainActivity extends BaseActivity
         setSearchBarActions();
         ListView last_recipes = findViewById(R.id.main_last_recipes_list_view);
         List<Recipe> recipes = this.getExampleRecipes();
-        BaseAdapter adapter = new LastRecipeAdapter(this, R.layout.adapter_last_recipe, new LinkedList<Recipe>());
-        last_recipes.setAdapter(adapter);
+        this.adapter = new LastRecipeAdapter(this, R.layout.adapter_last_recipe, new LinkedList<Recipe>());
+        last_recipes.setAdapter(this.adapter);
         last_recipes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -66,6 +70,13 @@ public class MainActivity extends BaseActivity
                 System.out.println("Selected recipe: " + recipe.getTitle());
             }
         });
+
+        this.swipeRefreshLayout = findViewById(R.id.swipe_container);
+        this.swipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    private void loadRecipes() {
+        System.out.println("Refresh...");
     }
 
     @Override
@@ -134,5 +145,12 @@ public class MainActivity extends BaseActivity
                 search_bar.closeSearch();
                 break;
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        this.swipeRefreshLayout.setRefreshing(true);
+        this.loadRecipes();
+        this.swipeRefreshLayout.setRefreshing(false);
     }
 }

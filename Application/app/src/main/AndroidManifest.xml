@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-<!--                <activity-->
-<!--            android:name=".LastRecipeAdapter"-->
-<!--            android:label="@string/title_activity_adapter_last_recipe"></activity>-->
+        <!-- <activity -->
+        <!-- android:name=".LastRecipeAdapter" -->
+        <!-- android:label="@string/title_activity_adapter_last_recipe"></activity> -->
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

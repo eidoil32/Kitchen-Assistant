@@ -2,27 +2,30 @@ package com.kitchas.kitchenassistant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.assistant.voicedetection.TextToSpeechManager;
 import com.kitchas.kitchenassistant.utils.CustomTextWatcher;
 import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Tools;
-import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,13 +65,13 @@ public class LoginActivity extends BaseActivity {
         login.setOnClickListener(this::login);
 
         final Button register = findViewById(R.id.login_btn_sign_up);
-        register.setOnClickListener(this::register);
+        register.setOnClickListener(this::addName);
     }
 
     private void onSuccessLoggedIn(JSONObject response) {
         try {
-            this.user.setData(response);
-            this.user.saveToLocal(this, response.getString("TOKEN"));
+            this.user.setData(response.getJSONObject("user"));
+            this.user.saveToLocal(this, response.getString("token"));
             Toast.makeText(this, R.string.TOAST_LOGGED_IN_SUCCESSFULLY, Toast.LENGTH_LONG).show();
             OnUserLoggedIn();
         } catch (JSONException e) {
@@ -132,12 +135,33 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void register(View view) {
+    private void addName(View view) {
         String[] values = getEmailPassword();
+        if (values != null) {
+            View inputTextView = LayoutInflater
+                    .from(view.getContext())
+                    .inflate(R.layout.activity_input_text, (ViewGroup) view.getParent(), false);
+            final TextInputLayout inputName = inputTextView.findViewById(R.id.text_input);
+            inputName.setHelperText(getString(R.string.SET_NAME_INPUT_HELPER, values[0].split("@")[0]));
+            AlertDialog dialog = new MaterialAlertDialogBuilder(view.getContext())
+                    .setTitle(R.string.SET_NAME_DIALOG_CONTENT)
+                    .setPositiveButton(R.string.NEXT_BTN, (dialogInterface, buttonPressed) -> {
+                        String name = values[0].split("@")[0];
+                        if (inputName.getEditText() != null && !inputName.getEditText().getText().toString().isEmpty()) {
+                            name = inputName.getEditText().getText().toString();
+                        }
 
+                        this.register(new String[]{values[0], values[1], name});
+                    })
+                    .setNegativeButton(R.string.CANCEL_BTN, (dialogInterface, buttonPressed) -> {})
+                    .setView(inputTextView)
+                    .show();
+       }
+    }
+
+    private void register(String[] values) {
         if (values != null) { // email is not null && password is not null!
-            User.register(values[0],
-                    values[1],
+            User.register(values,
                     this::onSuccessLoggedIn,
                     this::setErrorMessage,
                     this
