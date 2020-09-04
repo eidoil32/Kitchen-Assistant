@@ -8,8 +8,10 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 abstract class BaseAdapter<T> extends ArrayAdapter<T> {
+    protected Context context;
 
     public BaseAdapter(@NonNull Context context, int resource, @NonNull List<T> objects) {
         super(context, resource, objects);
+        this.context = context;
     }
 }

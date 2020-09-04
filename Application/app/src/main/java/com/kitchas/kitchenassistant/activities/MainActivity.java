@@ -12,13 +12,15 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
+import com.kitchas.kitchenassistant.activities.framents.HomeFragment;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
-import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
+import com.kitchas.kitchenassistant.assistant.user.RecipeUser;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
@@ -34,8 +36,9 @@ public class MainActivity extends BaseActivity
     private DrawerLayout drawer;
     private User user = null;
     private ImageView search_icon_view;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipe_refresh_layout;
     private BaseAdapter adapter;
+    private ListView recipes_list_view;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,12 +61,14 @@ public class MainActivity extends BaseActivity
         this.search_icon_view = findViewById(R.id.main_search_icon);
         this.search_bar = findViewById(R.id.searchBar);
 
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_activity_framelayout, new HomeFragment());
+
         setSearchBarActions();
-        ListView last_recipes = findViewById(R.id.main_last_recipes_list_view);
+        this.recipes_list_view = findViewById(R.id.main_last_recipes_list_view);
         List<Recipe> recipes = this.getExampleRecipes();
-        this.adapter = new LastRecipeAdapter(this, R.layout.adapter_last_recipe, new LinkedList<Recipe>());
-        last_recipes.setAdapter(this.adapter);
-        last_recipes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        loadRecipes();
+        this.recipes_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Recipe recipe = (Recipe) adapterView.getItemAtPosition(position);
@@ -71,12 +76,17 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        this.swipeRefreshLayout = findViewById(R.id.swipe_container);
-        this.swipeRefreshLayout.setOnRefreshListener(this);
+        this.swipe_refresh_layout = findViewById(R.id.swipe_container);
+        this.swipe_refresh_layout.setOnRefreshListener(this);
     }
 
     private void loadRecipes() {
         System.out.println("Refresh...");
+        Recipe.fetchCommunityRecipes(this, recipes -> {
+            List<Recipe> recipeList = (List<Recipe>)recipes;
+            this.adapter = new LastRecipeAdapter(this, R.layout.adapter_last_recipe, recipeList);
+            this.recipes_list_view.setAdapter(adapter);
+        }, response -> {}, 1, 10);
     }
 
     @Override
@@ -87,7 +97,7 @@ public class MainActivity extends BaseActivity
 
     private List<Recipe> getExampleRecipes() {
         List<Recipe> recipes = new LinkedList<>();
-        Recipe recipe = new Recipe("Test recipe 1", User.getInstance(this));
+        Recipe recipe = new Recipe("Test recipe 1", new RecipeUser());
         recipe.setDescription("This is example for last recipe, we need to get it from local db and ...");
         recipe.setRate(4);
         recipe.setTotal_time(10000);
@@ -149,8 +159,8 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onRefresh() {
-        this.swipeRefreshLayout.setRefreshing(true);
+        this.swipe_refresh_layout.setRefreshing(true);
         this.loadRecipes();
-        this.swipeRefreshLayout.setRefreshing(false);
+        this.swipe_refresh_layout.setRefreshing(false);
     }
 }

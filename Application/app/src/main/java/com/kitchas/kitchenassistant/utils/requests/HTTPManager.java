@@ -8,15 +8,19 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Settings;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HTTPManager {
@@ -80,7 +84,7 @@ public class HTTPManager {
     private void sendHTTPRequest(String endpoint, Map<String, String> parameters, int method, final IOnRequest success_callback, final IOnRequest error_callback, Context context) {
         RequestQueue queue = Volley.newRequestQueue(context);
         if (token != null)
-            parameters.put("TOKEN", this.token.getToken());
+            parameters.put("token", this.token.getToken());
         JsonObjectRequest request = new JsonObjectRequest(method, Settings.SERVER_URL + endpoint, new JSONObject(parameters),
                 response -> {
                     if (null != response) {
@@ -88,6 +92,7 @@ public class HTTPManager {
                     }
                 },
                 error -> {
+                    System.out.println(error.getMessage());
                     try {
                         String s = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                         JSONObject object = new JSONObject(s);
@@ -99,6 +104,51 @@ public class HTTPManager {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 return parameters;
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token.getToken());
+                return headers;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    public void request(String endpoint, Map<String, String> parameters, int method, final IOnRequestObject success_callback, final IOnRequest error_callback, Context context) {
+        RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest request = new StringRequest(method, Settings.SERVER_URL + endpoint,
+                response -> {
+                    try {
+                        Object results;
+                        try {
+                            results = new JSONArray(response);
+                        } catch (JSONException ignored) {
+                            try {
+                                results = new JSONObject(response);
+                            } catch (JSONException _ignored) {
+                                throw new Exception("UNKNOWN RESPONSE");
+                            }
+                        }
+
+                        success_callback.onResponse(results);
+                    } catch (Exception e) {
+
+                    }
+                }, error -> {
+            System.out.println(error);
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return parameters;
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json; charset=UTF-8");
+                headers.put("Authorization", "Bearer " + token.getToken());
+                return headers;
             }
         };
         request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
