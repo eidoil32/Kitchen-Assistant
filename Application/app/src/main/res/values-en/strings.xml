@@ -43,4 +43,7 @@
     <string name="NEXT_BTN">Next</string>
     <string name="SET_NAME_INPUT_HELPER">Or we can call you %1$s?</string>
     <string name="SET_NAME_DIALOG_CONTENT">How do you want us to call you?</string>
+    <string name="CANNOT_RATE_TWICE">You cannot rate the same recipe twice</string>
+    <string name="STEP">Step</string>
+    <string name="INGREDIENTS">Ingredients</string>
 </resources>

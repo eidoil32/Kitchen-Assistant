@@ -20,4 +20,14 @@ public class Instructions {
         }
         return false;
     }
+
+    public String printSteps() {
+        StringBuilder steps = new StringBuilder();
+        int i = 1;
+        for (Step step: this.steps) {
+            steps.append(String.format("%d. %s\n", i++, step.getDescription()));
+        }
+
+        return steps.toString();
+    }
 }

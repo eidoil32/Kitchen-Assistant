@@ -2,30 +2,40 @@ package com.kitchas.kitchenassistant.activities.framents;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.adapters.FullRecipeDetailAdapter;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
+import com.kitchas.kitchenassistant.assistant.models.CustomPair;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-public class HomeFragment extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener{
+public class RecipeViewFragment extends Fragment {
     private FragmentActivity listener;
-    private SwipeRefreshLayout swipe_refresh_layout;
-    private BaseAdapter adapter;
-    private ListView recipes_list_view;
+    private String recipe_id;
+
+    public RecipeViewFragment(String recipe_id) {
+        this.recipe_id = recipe_id;
+    }
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -46,20 +56,11 @@ public class HomeFragment extends Fragment
         super.onCreate(savedInstanceState);
     }
 
-    private void loadRecipes() {
-        System.out.println("Refresh...");
-        Recipe.fetchCommunityRecipes(this.listener, recipes -> {
-            List<Recipe> recipeList = (List<Recipe>)recipes;
-            this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-            this.recipes_list_view.setAdapter(adapter);
-        }, response -> {}, 1, 10);
-    }
-
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_recipe_list, parent, false);
+        return inflater.inflate(R.layout.activity_recipe_view, parent, false);
     }
 
     // This event is triggered soon after onCreateView().
@@ -68,17 +69,40 @@ public class HomeFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);
-        loadRecipes();
-        this.recipes_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Recipe recipe = (Recipe) adapterView.getItemAtPosition(position);
+        Recipe.loadRecipeByID(this.recipe_id, this.getContext(), _recipe -> {
+            if (_recipe instanceof Recipe) {
+                Recipe recipe = (Recipe) _recipe;
+                loadRecipe(recipe);
             }
+        }, error -> {
+            System.out.println("Error loading recipe");
+            System.out.println(error);
         });
+    }
 
-        this.swipe_refresh_layout = this.listener.findViewById(R.id.swipe_container);
-        this.swipe_refresh_layout.setOnRefreshListener(this);
+    private void loadRecipe(Recipe recipe) {
+        TextView title = (TextView) this.listener.findViewById(R.id.view_recipe_title);
+        TextView description = (TextView) this.listener.findViewById(R.id.view_recipe_description);
+        ImageView image = (ImageView) this.listener.findViewById(R.id.view_recipe_image);
+        if (recipe.getImage() != null) {
+            byte[] decodedString = Base64.decode(recipe.getImage(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            image.setImageBitmap(decodedByte);
+        }
+        RatingBar rating_bar = (RatingBar) this.listener.findViewById(R.id.view_recipe_rating_bar);
+        rating_bar.setRating((float)recipe.getRate());
+        TextView rating_value = (TextView) this.listener.findViewById(R.id.view_recipe_rating_text);
+        rating_value.setText(String.format("%.1f/5", recipe.getRate()));
+        title.setText(recipe.getTitle());
+        description.setText(recipe.getDescription());
+        ListView full_details = this.listener.findViewById(R.id.view_recipe_list_view);
+        List<CustomPair<String, String>> details = new LinkedList<>();
+        details.add(new CustomPair<String, String>(this.listener.getString(R.string.STEP), recipe.printSteps()));
+        details.add(new CustomPair<String, String>(this.listener.getString(R.string.INGREDIENTS), recipe.printIngredients()));
+        BaseAdapter adapter = new FullRecipeDetailAdapter(this.listener, R.layout.adapter_view_recipe_full, details);
+        full_details.setAdapter(adapter);
+        TextView total_time = (TextView) this.listener.findViewById(R.id.view_recipe_total_time_text);
+        total_time.setText(String.format("%d hours", recipe.getTotal_time()));
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -86,7 +110,6 @@ public class HomeFragment extends Fragment
     @Override
     public void onDetach() {
         super.onDetach();
-        this.listener = null;
     }
 
     // This method is called after the parent Activity's onCreate() method has completed.
@@ -95,12 +118,5 @@ public class HomeFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onRefresh() {
-        this.swipe_refresh_layout.setRefreshing(true);
-        this.loadRecipes();
-        this.swipe_refresh_layout.setRefreshing(false);
     }
 }

@@ -12,6 +12,7 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -30,15 +31,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity
-        implements MaterialSearchBar.OnSearchActionListener,
-                    SwipeRefreshLayout.OnRefreshListener {
+        implements MaterialSearchBar.OnSearchActionListener{
     private MaterialSearchBar search_bar;
     private DrawerLayout drawer;
     private User user = null;
     private ImageView search_icon_view;
-    private SwipeRefreshLayout swipe_refresh_layout;
-    private BaseAdapter adapter;
-    private ListView recipes_list_view;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,47 +61,16 @@ public class MainActivity extends BaseActivity
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_framelayout, new HomeFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
 
         setSearchBarActions();
-        this.recipes_list_view = findViewById(R.id.main_last_recipes_list_view);
-        List<Recipe> recipes = this.getExampleRecipes();
-        loadRecipes();
-        this.recipes_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Recipe recipe = (Recipe) adapterView.getItemAtPosition(position);
-                System.out.println("Selected recipe: " + recipe.getTitle());
-            }
-        });
-
-        this.swipe_refresh_layout = findViewById(R.id.swipe_container);
-        this.swipe_refresh_layout.setOnRefreshListener(this);
-    }
-
-    private void loadRecipes() {
-        System.out.println("Refresh...");
-        Recipe.fetchCommunityRecipes(this, recipes -> {
-            List<Recipe> recipeList = (List<Recipe>)recipes;
-            this.adapter = new LastRecipeAdapter(this, R.layout.adapter_last_recipe, recipeList);
-            this.recipes_list_view.setAdapter(adapter);
-        }, response -> {}, 1, 10);
     }
 
     @Override
     protected void speechResult(String query) {
         System.out.println(query);
         // Todo implement speechResults
-    }
-
-    private List<Recipe> getExampleRecipes() {
-        List<Recipe> recipes = new LinkedList<>();
-        Recipe recipe = new Recipe("Test recipe 1", new RecipeUser());
-        recipe.setDescription("This is example for last recipe, we need to get it from local db and ...");
-        recipe.setRate(4);
-        recipe.setTotal_time(10000);
-
-        recipes.add(recipe);
-        return recipes;
     }
 
     private void setSearchBarActions() {
@@ -158,9 +125,12 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public void onRefresh() {
-        this.swipe_refresh_layout.setRefreshing(true);
-        this.loadRecipes();
-        this.swipe_refresh_layout.setRefreshing(false);
+    public void onBackPressed() {
+        FragmentManager mgr = getSupportFragmentManager();
+        if (mgr.getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            mgr.popBackStack();
+        }
     }
 }

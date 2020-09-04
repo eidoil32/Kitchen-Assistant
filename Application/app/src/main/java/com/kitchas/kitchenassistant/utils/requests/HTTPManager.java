@@ -7,6 +7,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -58,6 +59,8 @@ public class HTTPManager {
     }
     private static HTTPManager instance;
     private Token token;
+    private RequestQueue queue = null;
+    private RetryPolicy retry_policy;
 
     public static HTTPManager getInstance() {
         if (instance == null) {
@@ -67,7 +70,12 @@ public class HTTPManager {
         return instance;
     }
 
-    private HTTPManager() { }
+    private HTTPManager() {
+        this.retry_policy = new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+    }
 
     public void setToken(String token) {
         this.token = Token.getInstance(token);
@@ -82,9 +90,9 @@ public class HTTPManager {
     }
 
     private void sendHTTPRequest(String endpoint, Map<String, String> parameters, int method, final IOnRequest success_callback, final IOnRequest error_callback, Context context) {
-        RequestQueue queue = Volley.newRequestQueue(context);
-        if (token != null)
-            parameters.put("token", this.token.getToken());
+        if (this.queue == null) {
+            this.queue = Volley.newRequestQueue(context);
+        }
         JsonObjectRequest request = new JsonObjectRequest(method, Settings.SERVER_URL + endpoint, new JSONObject(parameters),
                 response -> {
                     if (null != response) {
@@ -92,7 +100,6 @@ public class HTTPManager {
                     }
                 },
                 error -> {
-                    System.out.println(error.getMessage());
                     try {
                         String s = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                         JSONObject object = new JSONObject(s);
@@ -112,12 +119,15 @@ public class HTTPManager {
                 return headers;
             }
         };
-        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
+
+        request.setRetryPolicy(retry_policy);
+        this.queue.add(request);
     }
 
     public void request(String endpoint, Map<String, String> parameters, int method, final IOnRequestObject success_callback, final IOnRequest error_callback, Context context) {
-        RequestQueue queue = Volley.newRequestQueue(context);
+        if (this.queue == null) {
+            this.queue = Volley.newRequestQueue(context);
+        }
         StringRequest request = new StringRequest(method, Settings.SERVER_URL + endpoint,
                 response -> {
                     try {
@@ -137,7 +147,17 @@ public class HTTPManager {
 
                     }
                 }, error -> {
-            System.out.println(error);
+            System.out.println(error.getMessage());
+            try {
+                if (error.getMessage() != null) {
+                    error_callback.onResponse(new JSONObject());
+                } else {
+                    throw new Exception("");
+                }
+            } catch (Exception ignored) {
+                error_callback.onResponse(Settings.UNKNOWN_ERROR);
+
+            }
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -151,7 +171,7 @@ public class HTTPManager {
                 return headers;
             }
         };
-        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
+        request.setRetryPolicy(retry_policy);
+        this.queue.add(request);
     }
 }

@@ -1,15 +1,29 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Ingredient {
     private String title, description;
     private int amount;
     private Units unit;
+    private int priority;
 
-    public Ingredient(String title, String description, int amount, Units unit) {
+    public Ingredient(String title, String description, int amount, Units unit, int priority) {
         this.title = title;
         this.description = description;
         this.amount = amount;
         this.unit = unit;
+        this.priority = priority;
+    }
+
+    public static Ingredient loadFromJSON(JSONObject json) throws JSONException {
+        return new Ingredient(
+                json.getString("title"),
+                json.getString("description"),
+                json.getInt("amount"),
+                Units.valueOf(json.getString("unit").toUpperCase()),
+                json.getInt("priority"));
     }
 
     @Override
@@ -54,5 +68,13 @@ public class Ingredient {
 
     public void setUnit(Units unit) {
         this.unit = unit;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }

@@ -1,5 +1,8 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe.instructions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Step {
     private String description;
     private String special_notes;
@@ -9,6 +12,10 @@ public class Step {
         this.description = description;
         this.special_notes = special_notes;
         this.time = time;
+    }
+
+    public static Step loadFromJSON(JSONObject json) throws JSONException {
+        return new Step(json.getString("description"), json.getString("specialNotes"), json.getInt("time"));
     }
 
     public int getTime() {

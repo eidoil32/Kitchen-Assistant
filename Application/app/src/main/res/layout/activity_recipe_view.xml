@@ -10,7 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="10dp">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline13"
@@ -24,14 +25,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="683dp" />
+            app:layout_constraintGuide_begin="640dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="195dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline17"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="179dp" />
+            app:layout_constraintGuide_begin="279dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline16"
@@ -41,7 +49,7 @@
             app:layout_constraintGuide_begin="112dp" />
 
         <ImageView
-            android:id="@+id/adapter_last_recipe_image"
+            android:id="@+id/view_recipe_image"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
@@ -52,7 +60,7 @@
             tools:src="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/adapter_last_recipe_title"
+            android:id="@+id/view_recipe_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -64,64 +72,64 @@
             app:layout_constraintTop_toTopOf="@+id/guideline13" />
 
         <RatingBar
-            android:id="@+id/adapter_last_recipe_rating_bar"
+            android:id="@+id/view_recipe_rating_bar"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:scaleX=".4"
             android:scaleY=".4"
             android:transformPivotX="0dp"
             android:transformPivotY="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline12"
             app:layout_constraintEnd_toStartOf="@+id/guideline16"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/adapter_last_recipe_title"
-            app:layout_constraintTop_toBottomOf="@+id/adapter_last_recipe_title" />
+            app:layout_constraintStart_toStartOf="@+id/view_recipe_title"
+            app:layout_constraintTop_toBottomOf="@+id/view_recipe_title" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_container"
+        <TextView
+            android:id="@+id/view_recipe_description"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="top|left"
+            app:layout_constraintBottom_toTopOf="@+id/guideline17"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_recipe_rating_bar" />
+
+        <ListView
+            android:id="@+id/view_recipe_list_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline17">
-
-            <TextView
-                android:id="@+id/adapter_last_recipe_description"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:text="sdfgsdfg" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            app:layout_constraintTop_toTopOf="@+id/guideline17" />
 
         <TextView
-            android:id="@+id/adapter_last_recipe_rating_text"
+            android:id="@+id/view_recipe_rating_text"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline17"
             app:layout_constraintStart_toStartOf="@+id/guideline16"
-            app:layout_constraintTop_toBottomOf="@+id/adapter_last_recipe_title" />
+            app:layout_constraintTop_toBottomOf="@+id/view_recipe_title" />
 
         <ImageView
-            android:id="@+id/adapter_last_recipe_clock_time_icon"
+            android:id="@+id/view_recipe_clock_time_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
             android:contentDescription="@string/RECIPE_IMAGE"
             android:src="@drawable/clock_time_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/view_recipe_rating_bar"
+            app:layout_constraintTop_toBottomOf="@+id/view_recipe_title" />
 
         <TextView
-            android:id="@+id/adapter_last_recipe_total_time_text"
+            android:id="@+id/view_recipe_total_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/adapter_last_recipe_clock_time_icon"
-            app:layout_constraintStart_toEndOf="@+id/adapter_last_recipe_clock_time_icon"
-            app:layout_constraintTop_toTopOf="@+id/adapter_last_recipe_clock_time_icon" />
+            app:layout_constraintBottom_toBottomOf="@+id/view_recipe_clock_time_icon"
+            app:layout_constraintStart_toEndOf="@+id/view_recipe_clock_time_icon"
+            app:layout_constraintTop_toTopOf="@+id/view_recipe_clock_time_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
