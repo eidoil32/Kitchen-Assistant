@@ -115,7 +115,9 @@ public class HTTPManager {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + token.getToken());
+                if (token != null) {
+                    headers.put("Authorization", "Bearer " + token.getToken());
+                }
                 return headers;
             }
         };
