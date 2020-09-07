@@ -26,7 +26,6 @@ public abstract class TextToSpeechManager implements TextToSpeech.OnInitListener
     public abstract String getText();
 
     public void preformSpeak(int resultCode, AppCompatActivity activity) {
-
         if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
             this.textToSpeech = new TextToSpeech(activity, this);//this, Manager
         } else {//Ask to install what needed!
@@ -34,13 +33,6 @@ public abstract class TextToSpeechManager implements TextToSpeech.OnInitListener
             installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
             activity.startActivity(installIntent);
         }
-
-    public void speak(Context context, String text) {
-        this.textToSpeech = new
-                TextToSpeech(context, this);
-        textToSpeech.setSpeechRate(pitch);
-        textToSpeech.setSpeechRate(speech);
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null); //QUEUE_ADD
     }
 
     @Override
