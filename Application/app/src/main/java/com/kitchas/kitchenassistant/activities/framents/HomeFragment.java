@@ -22,10 +22,10 @@ import java.util.List;
 
 public class HomeFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener{
-    private FragmentActivity listener;
-    private SwipeRefreshLayout swipe_refresh_layout;
-    private BaseAdapter adapter;
-    private ListView recipes_list_view;
+    protected FragmentActivity listener;
+    protected SwipeRefreshLayout swipe_refresh_layout;
+    protected BaseAdapter adapter;
+    protected ListView recipes_list_view;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -46,8 +46,7 @@ public class HomeFragment extends Fragment
         super.onCreate(savedInstanceState);
     }
 
-    private void loadRecipes() {
-        System.out.println("Refresh...");
+    protected void loadRecipes() {
         Recipe.fetchCommunityRecipes(this.listener, recipes -> {
             List<Recipe> recipeList = (List<Recipe>)recipes;
             this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);

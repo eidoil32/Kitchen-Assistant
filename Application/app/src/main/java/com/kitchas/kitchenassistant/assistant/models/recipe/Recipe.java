@@ -252,26 +252,29 @@ public class Recipe {
         return recipe;
     }
 
+    public static void fetchRecipesJSONArray(JSONArray _recipesJSON, GeneralCallback callback) {
+        List<Recipe> recipes = new LinkedList<>();
+        for (int i = 0; i < _recipesJSON.length(); i++) {
+            try {
+                JSONObject json = _recipesJSON.getJSONObject(i);
+                Recipe recipe = fetchRecipeFromJSON(json);
+                recipes.add(recipe);
+            } catch (JSONException e) {
+                System.out.println(e.getMessage());
+                // Not destroy all recipe because one,
+                // lets skip this one and keep trying to fetch others
+            }
+        }
+        callback.call(recipes);
+    }
+
     public static void fetchCommunityRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("limit", "10");
         parameters.put("page", "1");
         HTTPManager.getInstance().request("community/recipes", parameters, Request.Method.GET, response -> {
             if (response instanceof JSONArray) {
-                JSONArray responseArray = (JSONArray) response;
-                List<Recipe> recipes = new LinkedList<>();
-                    for (int i = 0; i < responseArray.length(); i++) {
-                        try {
-                            JSONObject json = responseArray.getJSONObject(i);
-                            Recipe recipe = fetchRecipeFromJSON(json);
-                            recipes.add(recipe);
-                        } catch (JSONException e) {
-                            System.out.println(e.getMessage());
-                            // Not destroy all recipe because one,
-                            // lets skip this one and keep trying to fetch others
-                        }
-                    }
-                    success_callback.call(recipes);
+                fetchRecipesJSONArray((JSONArray)response, success_callback);
             }
         }, error -> {
             System.out.println("Failed!");

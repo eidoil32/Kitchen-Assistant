@@ -4,19 +4,24 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.android.volley.Request;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kitchas.kitchenassistant.assistant.Base;
 import com.kitchas.kitchenassistant.utils.callbacks.IErrorCallback;
 import com.kitchas.kitchenassistant.utils.database.SQLHelper;
+import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Search extends Base {
@@ -42,13 +47,16 @@ public class Search extends Base {
     }
 
     public void searchInUserRecipe(String query, boolean include_favorites, ISearchCallback success_callback, IErrorCallback error_callback) {
-        // TODO implement searchFor function:
-        // API endpoint: "user/recipes/search" in GET
-        // 1. process the query
-        // 2. create Map<String, String> of the following parameters:
-        //      2.1. query (query)
-        //      2.2. favorite (include_favorites)
-        // 3. Send query and callbacks to Server with HTTPManager.GET
+        System.out.println(query);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("search", query);
+        parameters.put("limit", "10");
+        HTTPManager.getInstance().request("community/search/recipe?search=" + query,
+                parameters, Request.Method.GET, response -> success_callback.success((JSONArray)response), error -> {
+                    try {
+                        error_callback.error(new Exception(error.getString("error")));
+                    } catch (JSONException ignored) { }
+                }, context);
     }
 
     public void searchInCommunity(String query, ISearchCallback success_callback, IErrorCallback error_callback) {

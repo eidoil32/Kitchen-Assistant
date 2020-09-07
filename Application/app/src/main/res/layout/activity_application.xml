@@ -12,6 +12,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.mancj.materialsearchbar.MaterialSearchBar
+            android:id="@+id/searchBar"
+            style="@style/MaterialSearchBarLight.custom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:mt_hint=""
+            app:mt_maxSuggestionsCount="10"
+            app:mt_speechMode="true">
+
+        </com.mancj.materialsearchbar.MaterialSearchBar>
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"
             android:layout_width="wrap_content"
@@ -134,21 +149,6 @@
                 android:text="@string/MAIN_PROFILE_TAB_LABEL" />
 
         </com.google.android.material.tabs.TabLayout>
-
-        <com.mancj.materialsearchbar.MaterialSearchBar
-            android:id="@+id/searchBar"
-            style="@style/MaterialSearchBarLight.custom"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:mt_hint=""
-            app:mt_maxSuggestionsCount="10"
-            app:mt_speechMode="true" >
-
-        </com.mancj.materialsearchbar.MaterialSearchBar>
 
         <FrameLayout
             android:id="@+id/main_activity_framelayout"

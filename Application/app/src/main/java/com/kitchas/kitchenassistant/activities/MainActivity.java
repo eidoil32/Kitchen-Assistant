@@ -16,6 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepOneFragment;
 import com.kitchas.kitchenassistant.activities.framents.HomeFragment;
+import com.kitchas.kitchenassistant.activities.framents.SearchResultsFragment;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
@@ -53,6 +54,7 @@ public class MainActivity extends BaseActivity
         // Set all view of activity
         this.search_icon_view = findViewById(R.id.main_search_icon);
         this.search_bar = findViewById(R.id.searchBar);
+        this.search_bar.bringToFront();
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_framelayout, new HomeFragment());
@@ -108,10 +110,14 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onSearchConfirmed(CharSequence text) {
+        Tools.hideKeyboard(this);
         Search search = new Search(this);
         search.saveSearch(text.toString(), search_bar.getLastSuggestions());
         search.searchInUserRecipe(text.toString(), true, (results) -> {
-            System.out.println("Got the results from Server!");
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.main_activity_framelayout, new SearchResultsFragment(results));
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         }, (error) -> {
             System.out.println("ERROR SEARCHING!");
         });
