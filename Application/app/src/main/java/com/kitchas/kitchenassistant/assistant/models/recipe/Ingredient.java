@@ -18,11 +18,14 @@ public class Ingredient {
     }
 
     public static Ingredient loadFromJSON(JSONObject json) throws JSONException {
+        Units units = Units.NONE;
+        try {
+            Units.valueOf(json.getString("unit").toUpperCase());
+        } catch (IllegalArgumentException ignored) {}
         return new Ingredient(
                 json.getString("title"),
                 json.getString("description"),
-                json.getInt("amount"),
-                Units.valueOf(json.getString("unit").toUpperCase()),
+                json.getInt("amount"),units,
                 json.getInt("priority"));
     }
 

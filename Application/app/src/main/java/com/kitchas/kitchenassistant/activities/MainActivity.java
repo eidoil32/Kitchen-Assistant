@@ -4,30 +4,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
+import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepOneFragment;
 import com.kitchas.kitchenassistant.activities.framents.HomeFragment;
-import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
-import com.kitchas.kitchenassistant.assistant.user.RecipeUser;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity
@@ -36,6 +30,7 @@ public class MainActivity extends BaseActivity
     private DrawerLayout drawer;
     private User user = null;
     private ImageView search_icon_view;
+    private static FloatingActionButton fab;
 
 
     @Override
@@ -64,7 +59,19 @@ public class MainActivity extends BaseActivity
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
+        fab = findViewById(R.id.fab_add_recipe);
+        fab.setOnClickListener(view -> {
+            FragmentTransaction _fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            _fragmentTransaction.replace(R.id.main_activity_framelayout, new AddRecipeStepOneFragment());
+            _fragmentTransaction.addToBackStack(null);
+            _fragmentTransaction.commit();
+            fab.hide();
+        });
         setSearchBarActions();
+    }
+
+    public static FloatingActionButton getFab() {
+        return fab;
     }
 
     @Override
@@ -131,6 +138,7 @@ public class MainActivity extends BaseActivity
             super.onBackPressed();
         } else {
             mgr.popBackStack();
+            MainActivity.getFab().show();
         }
     }
 }

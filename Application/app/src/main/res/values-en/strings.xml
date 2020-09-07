@@ -46,4 +46,11 @@
     <string name="CANNOT_RATE_TWICE">You cannot rate the same recipe twice</string>
     <string name="STEP">Step</string>
     <string name="INGREDIENTS">Ingredients</string>
+    <string name="recipe_title">Recipe Title</string>
+    <string name="UPLOAD_IMAGE">UPLOAD IMAGE</string>
+    <string name="EMPTY_REQUIRE">Error! Require fields are empty</string>
+    <string name="EMPTY_TITLE">Title of recipe cannot be empty</string>
+    <string name="EMPTY_DESCRIPTION">Recipe description cannot be empty</string>
+    <string name="ERROR_CREATING_RECIPE">Error creating recipe</string>
+    <string name="OK_BTN_TEXT">OK</string>
 </resources>

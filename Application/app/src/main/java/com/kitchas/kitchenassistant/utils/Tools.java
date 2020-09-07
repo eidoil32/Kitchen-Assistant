@@ -1,7 +1,12 @@
 package com.kitchas.kitchenassistant.utils;
+import android.content.Context;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
+import com.kitchas.kitchenassistant.R;
 
 import org.apache.commons.codec.digest.DigestUtils;
 

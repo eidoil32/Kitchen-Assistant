@@ -17,13 +17,14 @@ public class Settings {
         PERMISSION_ARRAY.put(Manifest.permission.CAMERA, "To wakeup the Assistant");
         PERMISSION_ARRAY.put(Manifest.permission.RECORD_AUDIO, "To talking with the assistant");
         PERMISSION_ARRAY.put(Manifest.permission.INTERNET, "To connect to our database and network");
+        PERMISSION_ARRAY.put(Manifest.permission.READ_EXTERNAL_STORAGE, "To load images to local storage");
     }
     public static String SERVER_URL;
     static {
         if (!ENV.equals("DEV")) {
             SERVER_URL = "https://kitchen-assistant.herokuapp.com/api/";
         } else {
-            SERVER_URL = "http://77.127.6.12:3000/api/";
+            SERVER_URL = "http://77.126.24.161:3000/api/";
         }
     }
     public static JSONObject UNKNOWN_ERROR;

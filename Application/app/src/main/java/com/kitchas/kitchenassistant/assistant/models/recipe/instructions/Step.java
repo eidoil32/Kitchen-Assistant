@@ -1,5 +1,7 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe.instructions;
 
+import com.kitchas.kitchenassistant.utils.JSONHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +17,9 @@ public class Step {
     }
 
     public static Step loadFromJSON(JSONObject json) throws JSONException {
-        return new Step(json.getString("description"), json.getString("specialNotes"), json.getInt("time"));
+        return new Step(JSONHelper.tryString(json,"description"),
+                JSONHelper.tryString(json,"specialNotes"),
+                JSONHelper.tryInt(json,"time"));
     }
 
     public int getTime() {

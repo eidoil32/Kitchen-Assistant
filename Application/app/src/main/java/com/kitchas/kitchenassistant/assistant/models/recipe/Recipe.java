@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
+import com.google.gson.internal.bind.util.ISO8601Utils;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Instructions;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Step;
 import com.kitchas.kitchenassistant.assistant.user.RecipeUser;
@@ -181,7 +182,6 @@ public class Recipe {
                 response -> {
                     try {
                         Recipe recipe = fetchRecipeFromJSON(response.getJSONObject("recipe"));
-                        System.out.println(response);
                         recipe.fetchInstructions(response.getJSONArray("instructions"));
                         recipe.fetchTags(response.getJSONArray("tags"));
                         recipe.fetchIngredients(response.getJSONArray("ingridients"));
@@ -213,9 +213,7 @@ public class Recipe {
                 JSONObject json = tags.getJSONObject(i);
                 Tag tag = Tag.loadFromJSON(json);
                 this.tags.add(tag);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            } catch (JSONException ignored) {}
         }
     }
 
@@ -233,14 +231,20 @@ public class Recipe {
     }
 
     public static Recipe fetchRecipeFromJSON(JSONObject json) throws JSONException {
-        RecipeUser creator = new RecipeUser(json.getString("creator"));
+        RecipeUser creator = null;
+        try {
+            creator = new RecipeUser(json.getString("creator"));
+        } catch (JSONException ignored) {
+            creator = new RecipeUser("System");
+        }
         Recipe recipe = new Recipe(json.getString("title"), creator, json.getInt("adate"), false);
         recipe.setId(json.getString("_id"));
         recipe.setRate(Float.parseFloat(json.getString("rate")));
         recipe.setTotal_time(100);
         recipe.setDescription(json.getString("description"));
         try {
-            recipe.setImage(json.getString("image"));
+            String image = json.getString("image");
+            recipe.setImage(image);
         } catch (JSONException ignored) {
             recipe.setImage(Settings.image);
         }
@@ -250,6 +254,8 @@ public class Recipe {
 
     public static void fetchCommunityRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit) {
         Map<String, String> parameters = new HashMap<>();
+        parameters.put("limit", "10");
+        parameters.put("page", "1");
         HTTPManager.getInstance().request("community/recipes", parameters, Request.Method.GET, response -> {
             if (response instanceof JSONArray) {
                 JSONArray responseArray = (JSONArray) response;

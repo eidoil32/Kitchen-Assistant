@@ -2,9 +2,8 @@ package com.kitchas.kitchenassistant.activities.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory;;
 import android.util.Base64;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,10 +18,14 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.MainActivity;
 import com.kitchas.kitchenassistant.activities.framents.RecipeViewFragment;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.utils.Settings;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class LastRecipeAdapter extends BaseAdapter<Recipe> {
@@ -50,6 +53,7 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
             view_holder.title.setText(recipe.getTitle());
             view_holder.description.setText(recipe.getDescription());
             if (recipe.getImage() != null) {
+                System.out.println(recipe.getImage());
                 byte[] decodedString = Base64.decode(recipe.getImage(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 view_holder.recipe_image.setImageBitmap(decodedByte);
@@ -74,6 +78,7 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
                 fragmentTransaction.replace(R.id.main_activity_framelayout, new RecipeViewFragment(recipe.getId()));
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
+                MainActivity.getFab().hide();
             });
         }
 
