@@ -9,12 +9,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.assistant.voicedetection.SpeechToTextManager;
+import com.kitchas.kitchenassistant.assistant.voicedetection.TextToSpeechManager;
 import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.PermissionHelper;
 
 import java.util.ArrayList;
 
 public abstract class BaseActivity extends AppCompatActivity {
+    protected int ENGINE_REQUEST_TEXT_TO_SPEECH = 10;
+    TextToSpeechManager textToSpeechManager;
     protected SpeechToTextManager speechToTextManager;
     protected int SPEECH_CODE = -1;
 
@@ -55,6 +58,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (requestCode == this.getSpeechCode() && resultCode == RESULT_OK && data != null) {
             ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             this.speechResult(result != null ? result.get(0) : "");
+        }
+        if (requestCode == ENGINE_REQUEST_TEXT_TO_SPEECH) {
+            textToSpeechManager.preformSpeak(resultCode,this);
         }
     }
 
