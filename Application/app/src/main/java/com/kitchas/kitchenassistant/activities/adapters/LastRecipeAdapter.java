@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.MainActivity;
 import com.kitchas.kitchenassistant.activities.framents.RecipeViewFragment;
@@ -32,7 +33,7 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
     public static int num = 0;
 
     public LastRecipeAdapter(@NonNull Context context, int resource, List<Recipe> recipes) {
-        super(context ,resource, recipes);
+        super(context, resource, recipes);
     }
 
     @Override
@@ -52,13 +53,13 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
         if (recipe != null) {
             view_holder.title.setText(recipe.getTitle());
             view_holder.description.setText(recipe.getDescription());
-            if (recipe.getImage() != null) {
-                System.out.println(recipe.getImage());
-                byte[] decodedString = Base64.decode(recipe.getImage(), Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                view_holder.recipe_image.setImageBitmap(decodedByte);
+            if (recipe.getImage() != null && !recipe.getImage().isEmpty()) {
+                Glide.with(convertView)
+                        .load(recipe.getImage())
+                        .centerCrop()
+                        .into(view_holder.recipe_image);
             }
-            view_holder.rating_bar.setRating((float)recipe.getRate());
+            view_holder.rating_bar.setRating((float) recipe.getRate());
             view_holder.rating_value.setText(String.format("%.1f/5", recipe.getRate()));
             view_holder.rating_bar.setOnRatingBarChangeListener((ratingBar, rate, by_user) -> {
                 if (by_user) {
@@ -74,7 +75,7 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
             });
             view_holder.total_time.setText(String.format("%d hours", recipe.getTotal_time()));
             view_holder.show_more.setOnClickListener(view -> {
-                FragmentTransaction fragmentTransaction = ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.main_activity_framelayout, new RecipeViewFragment(recipe.getId()));
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
@@ -85,7 +86,7 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
         return convertView;
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder{
+    private class ViewHolder extends RecyclerView.ViewHolder {
         final TextView title, description, total_time, rating_value;
         final Button show_more;
         final View view;

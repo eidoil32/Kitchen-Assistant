@@ -1,6 +1,7 @@
 package com.kitchas.kitchenassistant.activities.framents;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,11 +20,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.FullRecipeDetailAdapter;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.CustomPair;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
+import com.kitchas.kitchenassistant.utils.Tools;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -69,10 +72,12 @@ public class RecipeViewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ProgressDialog progress = Tools.showLoading(view.getContext());
         Recipe.loadRecipeByID(this.recipe_id, this.getContext(), _recipe -> {
             if (_recipe instanceof Recipe) {
                 Recipe recipe = (Recipe) _recipe;
                 loadRecipe(recipe);
+                progress.dismiss();
             }
         }, error -> {
             System.out.println("Error loading recipe");
@@ -84,13 +89,15 @@ public class RecipeViewFragment extends Fragment {
         TextView title = (TextView) this.listener.findViewById(R.id.view_recipe_title);
         TextView description = (TextView) this.listener.findViewById(R.id.view_recipe_description);
         ImageView image = (ImageView) this.listener.findViewById(R.id.view_recipe_image);
-        if (recipe.getImage() != null) {
-            byte[] decodedString = Base64.decode(recipe.getImage(), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            image.setImageBitmap(decodedByte);
+        if (recipe.getImage() != null && !recipe.getImage().isEmpty()) {
+            Glide.with(this)
+                    .load(recipe.getImage())
+                    .centerCrop()
+                    .into(image);
         }
         RatingBar rating_bar = (RatingBar) this.listener.findViewById(R.id.view_recipe_rating_bar);
         rating_bar.setRating((float)recipe.getRate());
+        rating_bar.setVisibility(View.VISIBLE);
         TextView rating_value = (TextView) this.listener.findViewById(R.id.view_recipe_rating_text);
         rating_value.setText(String.format("%.1f/5", recipe.getRate()));
         title.setText(recipe.getTitle());
@@ -103,6 +110,7 @@ public class RecipeViewFragment extends Fragment {
         full_details.setAdapter(adapter);
         TextView total_time = (TextView) this.listener.findViewById(R.id.view_recipe_total_time_text);
         total_time.setText(String.format("%d hours", recipe.getTotal_time()));
+        this.listener.findViewById(R.id.view_recipe_clock_time_icon).setVisibility(View.VISIBLE);
     }
 
     // This method is called when the fragment is no longer connected to the Activity

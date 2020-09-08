@@ -1,5 +1,8 @@
 package com.kitchas.kitchenassistant.activities.framents;
 
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.fragment.app.Fragment;
 
 import com.kitchas.kitchenassistant.R;
@@ -16,13 +19,7 @@ public class SearchResultsFragment extends HomeFragment {
 
     public SearchResultsFragment(JSONArray searchResults) {
         super();
-
-        this.searchResults = new JSONArray();
-        for (int i = 0; i < searchResults.length(); i++) {
-            try {
-                this.searchResults.put(searchResults.getJSONObject(i).getJSONObject("recipe"));
-            } catch (JSONException ignored) { }
-        }
+        this.searchResults = searchResults;
     }
 
     @Override
@@ -32,5 +29,11 @@ public class SearchResultsFragment extends HomeFragment {
             this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
             this.recipes_list_view.setAdapter(adapter);
         });
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.title.setText(getString(R.string.SEARCH_RESULTS));
     }
 }

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -26,6 +27,7 @@ public class HomeFragment extends Fragment
     protected SwipeRefreshLayout swipe_refresh_layout;
     protected BaseAdapter adapter;
     protected ListView recipes_list_view;
+    protected TextView title;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -67,6 +69,8 @@ public class HomeFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        this.title = this.listener.findViewById(R.id.recipe_list_title);
+        this.title.setText(getString(R.string.LAST_VIEW_RECIPES));
         this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);
         loadRecipes();
         this.recipes_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {

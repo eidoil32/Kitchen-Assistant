@@ -13,6 +13,7 @@ public class MotionDetector {
     private Sensor proximitySensor;
     private SensorEventListener listener;
     private final Context context;
+    private Float previous_results;
 
     public MotionDetector(Context context) throws Exception {
         this.context = context;
@@ -28,7 +29,8 @@ public class MotionDetector {
         this.listener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                callBack.function(sensorEvent.values[0] < proximitySensor.getMaximumRange());
+                callBack.function(previous_results != null && previous_results != sensorEvent.values[0]);
+                previous_results = sensorEvent.values[0];
             }
 
             @Override

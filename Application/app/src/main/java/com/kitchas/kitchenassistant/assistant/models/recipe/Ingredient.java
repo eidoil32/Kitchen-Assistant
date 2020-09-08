@@ -20,7 +20,7 @@ public class Ingredient {
     public static Ingredient loadFromJSON(JSONObject json) throws JSONException {
         Units units = Units.NONE;
         try {
-            Units.valueOf(json.getString("unit").toUpperCase());
+            units = Units.valueOf(json.getString("unit").toUpperCase());
         } catch (IllegalArgumentException ignored) {}
         return new Ingredient(
                 json.getString("title"),

@@ -1,5 +1,6 @@
 package com.kitchas.kitchenassistant.utils;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -45,5 +46,19 @@ public class Tools {
             view = new View(activity);
         }
         systemService.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static ProgressDialog showLoading(Context context) {
+        return showLoading(context, "Wait while loading...");
+    }
+
+    public static ProgressDialog showLoading(Context context, String text) {
+        ProgressDialog progress = new ProgressDialog(context);
+        progress.setTitle("Loading");
+        progress.setMessage(text);
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
+        return progress;
     }
 }

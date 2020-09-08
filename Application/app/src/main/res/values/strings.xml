@@ -60,4 +60,6 @@
     <string name="EMPTY_DESCRIPTION">Recipe description cannot be empty</string>
     <string name="ERROR_CREATING_RECIPE">Error creating recipe</string>
     <string name="OK_BTN_TEXT">OK</string>
+    <string name="LAST_VIEW_RECIPES">Last viewed recipes</string>
+    <string name="SEARCH_RESULTS">Search Results</string>
 </resources>

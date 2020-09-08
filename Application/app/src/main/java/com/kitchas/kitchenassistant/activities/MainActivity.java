@@ -1,10 +1,12 @@
 package com.kitchas.kitchenassistant.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
@@ -18,6 +20,7 @@ import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepOneFragment
 import com.kitchas.kitchenassistant.activities.framents.HomeFragment;
 import com.kitchas.kitchenassistant.activities.framents.SearchResultsFragment;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
+import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
@@ -32,12 +35,21 @@ public class MainActivity extends BaseActivity
     private User user = null;
     private ImageView search_icon_view;
     private static FloatingActionButton fab;
-
+    private boolean listenToSpeech = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         User user = User.getInstance(this);
+        MotionDetector.ActiveMotionDetector(this, result -> {
+            if (result && !listenToSpeech) {
+                listenToSpeech = true;
+                speechToTextManager.listen(this, 100);
+            }
+        }, error -> {
+            Toast.makeText(this, "Can not load speech search", Toast.LENGTH_LONG).show();
+        });
+        setSpeechCode(100);
         if (!user.isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -45,6 +57,7 @@ public class MainActivity extends BaseActivity
         } else {
             this.start();
         }
+
     }
 
     private void start() {
@@ -78,8 +91,15 @@ public class MainActivity extends BaseActivity
 
     @Override
     protected void speechResult(String query) {
-        System.out.println(query);
-        // Todo implement speechResults
+        this.onSearchConfirmed(query);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == this.getSpeechCode()) {
+            listenToSpeech = false;
+        }
     }
 
     private void setSearchBarActions() {
@@ -113,7 +133,10 @@ public class MainActivity extends BaseActivity
         Tools.hideKeyboard(this);
         Search search = new Search(this);
         search.saveSearch(text.toString(), search_bar.getLastSuggestions());
+        ProgressDialog progress = Tools.showLoading(this, "We searching in lightning speed! please wait..");
         search.searchInUserRecipe(text.toString(), true, (results) -> {
+            this.findViewById(R.id.main_toolbar_layout).setVisibility(View.GONE);
+            progress.dismiss();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.main_activity_framelayout, new SearchResultsFragment(results));
             fragmentTransaction.addToBackStack(null);

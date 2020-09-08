@@ -10,8 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline13"
@@ -19,13 +18,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_begin="112dp" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="640dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline12"
@@ -79,6 +71,7 @@
             android:scaleY=".4"
             android:transformPivotX="0dp"
             android:transformPivotY="0dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/guideline12"
             app:layout_constraintEnd_toStartOf="@+id/guideline16"
             app:layout_constraintHorizontal_bias="0.0"
@@ -88,9 +81,10 @@
         <TextView
             android:id="@+id/view_recipe_description"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:gravity="top|left"
-            app:layout_constraintBottom_toTopOf="@+id/guideline17"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_recipe_rating_bar" />
@@ -99,10 +93,12 @@
             android:id="@+id/view_recipe_list_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline15"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline17" />
+            app:layout_constraintTop_toBottomOf="@+id/view_recipe_description" />
 
         <TextView
             android:id="@+id/view_recipe_rating_text"
@@ -119,6 +115,7 @@
             android:layout_marginStart="16dp"
             android:contentDescription="@string/RECIPE_IMAGE"
             android:src="@drawable/clock_time_icon"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/view_recipe_rating_bar"
             app:layout_constraintTop_toBottomOf="@+id/view_recipe_title" />
 
