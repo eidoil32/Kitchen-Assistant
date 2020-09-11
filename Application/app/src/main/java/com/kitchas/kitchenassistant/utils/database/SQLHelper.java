@@ -77,7 +77,6 @@ public class SQLHelper extends SQLiteOpenHelper {
         values.put(SQLHelper.COLUMN_JSON, new Gson().toJson(params));
 
         long id = writer.insert(SQLHelper.TABLE_SAVED_DATA, null, values);
-        writer.close();
         return id;
     }
 
@@ -97,7 +96,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 SQLHelper.WHERE_COLUMN,
                 new String[]{ identify });
         System.out.println(res);
-        writer.close();
         return true;
     }
 

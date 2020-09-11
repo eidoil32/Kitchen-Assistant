@@ -166,41 +166,32 @@ public class User extends Base {
             }
         }
 
-        cursor.close();
         return results;
     }
 
     public boolean saveRecipeToLastViewed(Context context, String recipe_id) {
-        long id = -1;
-        if (!this.checkAlreadySaved(context, recipe_id)) {
-            System.out.println("not exists!");
-//            SQLHelper database = new SQLHelper(context);
-//            ContentValues values = new ContentValues();
-//            values.put("recipe", recipe_id);
-//
-//            id = database.writer.insert(User.DB_LAST_RECIPES_LIST, null, values);
-//            database.writer.close();
-        } else {
-            System.out.println("exits!");
+        boolean exists = this.checkAlreadySaved(context, recipe_id);
+        if (!exists) {
+            SQLHelper database = new SQLHelper(context);
+            ContentValues values = new ContentValues();
+            values.put("recipe", recipe_id);
+
+            long id = database.writer.insert(User.DB_LAST_RECIPES_LIST, null, values);
+            exists = id != 0;
         }
 
-        return id != 0;
+        return exists;
     }
 
     private boolean checkAlreadySaved(Context context, String recipe_id) {
         SQLHelper database = new SQLHelper(context);
-        if (!database.reader.isOpen()) {
-            database.reOpenReader(context);
-            if (!database.reader.isOpen()) {
-                System.out.println("hereeere");
-                return false;
-            }
-        }
-        database.reader.isOpen();
         Cursor cursor = database.reader.query(
-                User.DB_LAST_RECIPES_LIST, new String[]{"recipe"}, " recipe = ?", new String[]{recipe_id}, null, null, null
+                User.DB_LAST_RECIPES_LIST,
+                new String[]{"recipe"},
+                " recipe = ?",
+                new String[]{recipe_id},
+                null, null, null
         );
-        cursor.close();
         return cursor.getCount() > 0;
     }
 

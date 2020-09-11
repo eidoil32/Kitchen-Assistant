@@ -1,6 +1,7 @@
 package com.kitchas.kitchenassistant.activities.framents;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
+import com.kitchas.kitchenassistant.utils.Tools;
 
 import java.util.List;
 
@@ -50,10 +52,18 @@ public class HomeFragment extends Fragment
     }
 
     protected void loadRecipes() {
-        Recipe.fetchCommunityRecipes(this.listener, recipes -> {
+        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+        Recipe.fetchLastViewedRecipes(this.listener, recipes -> {
             List<Recipe> recipeList = (List<Recipe>)recipes;
-            this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-            this.recipes_list_view.setAdapter(adapter);
+            if (recipeList.isEmpty()) {
+                this.recipes_list_view.setVisibility(View.INVISIBLE);
+                this.title.setText(R.string.NO_LAST_RECIPES);
+            } else {
+                this.recipes_list_view.setVisibility(View.VISIBLE);
+                this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+                this.recipes_list_view.setAdapter(adapter);
+            }
+            progress.dismiss();
         }, response -> {}, 1, 10);
     }
 

@@ -67,4 +67,6 @@
     <string name="login_text_field_age">Your Age</string>
     <string name="BTN_SAVE">Save</string>
     <string name="LOAD_USER_DATA_FAILED">Sorry! loading user data failed</string>
+    <string name="LOADING_RECIPES">Loading last viewed recipes</string>
+    <string name="NO_LAST_RECIPES">You didn\'t watch any recipes, go community and watch some!</string>
 </resources>

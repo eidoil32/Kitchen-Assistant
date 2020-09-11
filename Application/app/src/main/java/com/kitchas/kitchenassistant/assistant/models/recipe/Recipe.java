@@ -162,6 +162,20 @@ public class Recipe {
         return null;
     }
 
+    public static void fetchLastViewedRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("limit", "10");
+        parameters.put("page", "1");
+        HTTPManager.getInstance().request("community/recipes", parameters, Request.Method.GET, response -> {
+            if (response instanceof JSONArray) {
+                fetchRecipesJSONArray((JSONArray)response, success_callback);
+            }
+        }, error -> {
+            System.out.println("Failed!");
+            System.out.println(error);
+        }, context);
+    }
+
     public static void fetchMyRecipes(Context context, IOnRequest success, IOnRequest error, int page) {
         fetchMyRecipes(context, success, error, page, 10);
     }
