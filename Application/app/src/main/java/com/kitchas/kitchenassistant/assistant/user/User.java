@@ -1,6 +1,9 @@
 package com.kitchas.kitchenassistant.assistant.user;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,13 +20,17 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class User extends Base {
     public static String DB_IDENTIFY = "USER_DATA";
+    public static String DB_LAST_RECIPES_LIST = "RECIPES_LIST";
 
     public static User instance;
-    private String email;
+    private String email, name, avatar;
+    private int age;
     private boolean logged_in = false;
 
     private User(Context context) {
@@ -38,6 +45,22 @@ public class User extends Base {
             return true;
         }
         return false;
+    }
+
+    public void getFullData(Context context, IOnRequest on_load_callback) {
+        HTTPManager.getInstance().GETRequest("user/profile",new HashMap<>(), response -> {
+            try {
+                this.email = response.getString("email");
+                this.age = response.getInt("age");
+                this.name = response.getString("name");
+                this.avatar = response.getString("avatar");
+                on_load_callback.onResponse(new JSONObject());
+            } catch (JSONException e) {
+                Toast.makeText(context, R.string.LOAD_USER_DATA_FAILED, Toast.LENGTH_SHORT).show();
+            }
+        }, error -> {
+            Toast.makeText(context, R.string.LOAD_USER_DATA_FAILED, Toast.LENGTH_SHORT).show();
+        }, context);
     }
 
     public static User getInstance(Context context) {
@@ -109,6 +132,76 @@ public class User extends Base {
         Map<String, String> user_data = new Gson().fromJson(user_data_json, empMapType);
         this.email = user_data.get("email");
         HTTPManager.getInstance().setToken(user_data.get("TOKEN"));
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public String getAvatar() {
+        return this.avatar;
+    }
+
+    public int getAge() {
+        return this.age;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public List<String> getLastViewedRecipes(Context context) {
+        SQLHelper database = new SQLHelper(context);
+        Cursor cursor = database.reader.query(
+                User.DB_LAST_RECIPES_LIST,
+                new String[]{"recipe"}, "", new String[]{}, null, null, null);
+        List<String> results = new LinkedList<>();
+        if (cursor.getCount() > 0) {
+            try {
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                    System.out.println(cursor.getString(0));
+                }
+            } catch (Exception e) {
+                return results;
+            }
+        }
+
+        cursor.close();
+        return results;
+    }
+
+    public boolean saveRecipeToLastViewed(Context context, String recipe_id) {
+        long id = -1;
+        if (!this.checkAlreadySaved(context, recipe_id)) {
+            System.out.println("not exists!");
+//            SQLHelper database = new SQLHelper(context);
+//            ContentValues values = new ContentValues();
+//            values.put("recipe", recipe_id);
+//
+//            id = database.writer.insert(User.DB_LAST_RECIPES_LIST, null, values);
+//            database.writer.close();
+        } else {
+            System.out.println("exits!");
+        }
+
+        return id != 0;
+    }
+
+    private boolean checkAlreadySaved(Context context, String recipe_id) {
+        SQLHelper database = new SQLHelper(context);
+        if (!database.reader.isOpen()) {
+            database.reOpenReader(context);
+            if (!database.reader.isOpen()) {
+                System.out.println("hereeere");
+                return false;
+            }
+        }
+        database.reader.isOpen();
+        Cursor cursor = database.reader.query(
+                User.DB_LAST_RECIPES_LIST, new String[]{"recipe"}, " recipe = ?", new String[]{recipe_id}, null, null, null
+        );
+        cursor.close();
+        return cursor.getCount() > 0;
     }
 
     public void saveToLocal(Context context, String token) {

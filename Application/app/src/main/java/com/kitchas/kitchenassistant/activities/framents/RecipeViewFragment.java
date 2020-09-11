@@ -26,6 +26,7 @@ import com.kitchas.kitchenassistant.activities.adapters.FullRecipeDetailAdapter;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.CustomPair;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
+import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 
 import java.util.LinkedList;
@@ -77,6 +78,10 @@ public class RecipeViewFragment extends Fragment {
             if (_recipe instanceof Recipe) {
                 Recipe recipe = (Recipe) _recipe;
                 loadRecipe(recipe);
+
+                User user = User.getInstance(view.getContext());
+                user.saveRecipeToLastViewed(view.getContext(), recipe.getId());
+
                 progress.dismiss();
             }
         }, error -> {

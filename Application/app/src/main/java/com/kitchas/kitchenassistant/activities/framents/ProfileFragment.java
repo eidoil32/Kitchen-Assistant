@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
@@ -22,14 +25,13 @@ import com.kitchas.kitchenassistant.assistant.user.User;
 
 import java.util.List;
 
-public class HomeFragment extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener{
+public class ProfileFragment extends Fragment{
     protected FragmentActivity listener;
-    protected SwipeRefreshLayout swipe_refresh_layout;
-    protected BaseAdapter adapter;
-    protected ListView recipes_list_view;
-    protected TextView title;
+    private User user;
 
+    public ProfileFragment(User user) {
+        this.user = user;
+    }
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
     // This does not mean the Activity is fully initialized.
@@ -49,19 +51,11 @@ public class HomeFragment extends Fragment
         super.onCreate(savedInstanceState);
     }
 
-    protected void loadRecipes() {
-        Recipe.fetchCommunityRecipes(this.listener, recipes -> {
-            List<Recipe> recipeList = (List<Recipe>)recipes;
-            this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-            this.recipes_list_view.setAdapter(adapter);
-        }, response -> {}, 1, 10);
-    }
-
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_recipe_list, parent, false);
+        return inflater.inflate(R.layout.activity_profile, parent, false);
     }
 
     // This event is triggered soon after onCreateView().
@@ -70,21 +64,13 @@ public class HomeFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        User user = User.getInstance(view.getContext());
-        user.getLastViewedRecipes(view.getContext());
-        this.title = this.listener.findViewById(R.id.recipe_list_title);
-        this.title.setText(getString(R.string.LAST_VIEW_RECIPES));
-        this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);
-        loadRecipes();
-        this.recipes_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Recipe recipe = (Recipe) adapterView.getItemAtPosition(position);
-            }
-        });
+        TextView name = this.listener.findViewById(R.id.profile_name);
+        ImageView image = this.listener.findViewById(R.id.profile_image);
+        TextInputLayout email = this.listener.findViewById(R.id.profile_email);
+        TextInputLayout age = this.listener.findViewById(R.id.profile_age);
+        Button save = this.listener.findViewById(R.id.profile_save);
 
-        this.swipe_refresh_layout = this.listener.findViewById(R.id.swipe_container);
-        this.swipe_refresh_layout.setOnRefreshListener(this);
+        email.getEditText().setText(user.getEmail());
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -101,12 +87,5 @@ public class HomeFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onRefresh() {
-        this.swipe_refresh_layout.setRefreshing(true);
-        this.loadRecipes();
-        this.swipe_refresh_layout.setRefreshing(false);
     }
 }
