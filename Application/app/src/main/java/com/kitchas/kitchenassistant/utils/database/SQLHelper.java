@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.gson.Gson;
+import com.kitchas.kitchenassistant.assistant.user.User;
+
+import java.util.List;
+import java.util.Map;
 
 public class SQLHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
@@ -35,11 +39,14 @@ public class SQLHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE " + TABLE_SAVED_DATA + " (" +
                 COLUMN_ID + " VARCHAR(255), " +
                 COLUMN_JSON + " TEXT" + ")");
+        sqLiteDatabase.execSQL("CREATE TABLE " + User.DB_LAST_RECIPES_LIST +
+                "(recipe TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_SAVED_DATA);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + User.DB_LAST_RECIPES_LIST);
         onCreate(sqLiteDatabase);
     }
 
@@ -53,7 +60,9 @@ public class SQLHelper extends SQLiteOpenHelper {
         if (cursor.getCount() > 0) {
             try {
                 cursor.moveToFirst();
-                return cursor.getString(cursor.getColumnIndexOrThrow(SQLHelper.COLUMN_JSON));
+                String res = cursor.getString(cursor.getColumnIndexOrThrow(SQLHelper.COLUMN_JSON));
+                cursor.close();
+                return res;
             } catch (Exception e) {
                 return null;
             }
@@ -67,7 +76,8 @@ public class SQLHelper extends SQLiteOpenHelper {
         values.put(SQLHelper.COLUMN_ID, identify);
         values.put(SQLHelper.COLUMN_JSON, new Gson().toJson(params));
 
-        return writer.insert(SQLHelper.TABLE_SAVED_DATA, null, values);
+        long id = writer.insert(SQLHelper.TABLE_SAVED_DATA, null, values);
+        return id;
     }
 
     public boolean updateData(Object params, String identify) {
@@ -87,5 +97,9 @@ public class SQLHelper extends SQLiteOpenHelper {
                 new String[]{ identify });
         System.out.println(res);
         return true;
+    }
+
+    public SQLHelper reOpenReader(Context context) {
+        return new SQLHelper(context);
     }
 }

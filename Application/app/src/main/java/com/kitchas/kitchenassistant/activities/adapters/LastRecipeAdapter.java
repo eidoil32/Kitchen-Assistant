@@ -73,6 +73,12 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
                     });
                 }
             });
+            float total_time_calc = recipe.getTotal_time();
+            String time_units = "";
+            if (total_time_calc > 60) {
+                time_units = "hours";
+                total_time_calc /= 60;
+            }
             view_holder.total_time.setText(String.format("%d hours", recipe.getTotal_time()));
             view_holder.show_more.setOnClickListener(view -> {
                 FragmentTransaction fragmentTransaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
