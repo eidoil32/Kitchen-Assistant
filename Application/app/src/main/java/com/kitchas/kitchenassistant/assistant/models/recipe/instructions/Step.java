@@ -1,5 +1,7 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe.instructions;
 
+import androidx.annotation.Nullable;
+
 import com.kitchas.kitchenassistant.utils.JSONHelper;
 
 import org.json.JSONException;
@@ -44,5 +46,23 @@ public class Step {
 
     public void setSpecial_notes(String special_notes) {
         this.special_notes = special_notes;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Step) {
+            Step object = (Step)obj;
+            return !this.description.equals(object.getDescription());
+        }
+
+        return false;
+    }
+
+    public JSONObject parseJSON(int priority) throws JSONException {
+        JSONObject step = new JSONObject();
+        step.put("description", this.description);
+        step.put("time", this.time);
+        step.put("priority", priority);
+        return step;
     }
 }

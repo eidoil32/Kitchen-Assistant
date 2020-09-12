@@ -62,4 +62,21 @@
     <string name="OK_BTN_TEXT">OK</string>
     <string name="LAST_VIEW_RECIPES">Last viewed recipes</string>
     <string name="SEARCH_RESULTS">Search Results</string>
+    <string name="CREATE_RECIPE_2_INSTRUCTIONS">Instructions</string>
+    <string name="BTN_ADD">Add</string>
+    <string name="CREATE_RECIPE_2_INGREDIENTS">Ingredients</string>
+    <string name="BTN_FINISH">Finish</string>
+    <string name="TAGS">Tags</string>
+    <string name="ADD_NEW_INSTRUCTION">Add new instruction</string>
+    <string name="dialog_instruction_description_hint">Description *</string>
+    <string name="dialog_instruction_time_hint">Time *</string>
+    <string name="dialog_instruction_special_notes_hint">Special Notes</string>
+    <string name="dialog_ingredients_title_hint">Title *</string>
+    <string name="dialog_ingredients_description_hint">Description</string>
+    <string name="dialog_ingredients_amount_hint">Amount *</string>
+    <string name="dialog_ingredients_unit_hint">Units</string>
+    <string name="ADD_NEW_INGREDIENT">Add new ingredient</string>
+    <string name="INVALID_UNIT_SELECTED">Please select unit from list</string>
+    <string name="POSTFIX_MINUTES">min</string>
+    <string name="CREATE_RECIPE_FAILED">Sorry, but the creation of recipe has been failed!</string>
 </resources>

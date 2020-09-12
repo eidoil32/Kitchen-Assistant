@@ -17,13 +17,18 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepOneFragment;
+import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepTwoFragment;
 import com.kitchas.kitchenassistant.activities.framents.HomeFragment;
 import com.kitchas.kitchenassistant.activities.framents.SearchResultsFragment;
+import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +68,6 @@ public class MainActivity extends BaseActivity
     private void start() {
         setContentView(R.layout.activity_application);
         Tools.hideTopBar(this);
-
         // Set all view of activity
         this.search_icon_view = findViewById(R.id.main_search_icon);
         this.search_bar = findViewById(R.id.searchBar);
@@ -81,6 +85,7 @@ public class MainActivity extends BaseActivity
             _fragmentTransaction.addToBackStack(null);
             _fragmentTransaction.commit();
             fab.hide();
+            this.findViewById(R.id.main_toolbar_layout).setVisibility(View.GONE);
         });
         setSearchBarActions();
     }
@@ -168,6 +173,7 @@ public class MainActivity extends BaseActivity
         } else {
             mgr.popBackStack();
             MainActivity.getFab().show();
+            this.findViewById(R.id.main_toolbar_layout).setVisibility(View.VISIBLE);
         }
     }
 }

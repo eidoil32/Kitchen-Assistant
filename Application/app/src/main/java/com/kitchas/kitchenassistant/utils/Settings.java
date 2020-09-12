@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Settings {
-    public static final String ENV = "STAGE";
+    public static final String ENV = "DEV";
     public static final int CAMERA_PERMISSION_REQUEST = 0;
     public static final Map<String, String> PERMISSION_ARRAY = new HashMap<>();
 
@@ -24,7 +24,7 @@ public class Settings {
         if (!ENV.equals("DEV")) {
             SERVER_URL = "https://kitchen-assistant.herokuapp.com/api/";
         } else {
-            SERVER_URL = "http://77.126.24.161:3000/api/";
+            SERVER_URL = "http://77.124.55.121:3000/api/";
         }
     }
     public static JSONObject UNKNOWN_ERROR;
@@ -34,6 +34,17 @@ public class Settings {
         } catch (JSONException e) {
             // hope this exception will not appeared, if it's does - WE ARE DEAD!
             UNKNOWN_ERROR = null;
+            System.out.println("WTF - Simple json object parsing is failed!");
+        }
+    }
+
+    public static JSONObject CONVERT_TO_JSON_FAILED;
+    static {
+        try {
+            CONVERT_TO_JSON_FAILED = new JSONObject("{'error': 'CONVERT_TO_JSON_FAILED'}");
+        } catch (JSONException e) {
+            // hope this exception will not appeared, if it's does - WE ARE DEAD!
+            CONVERT_TO_JSON_FAILED = null;
             System.out.println("WTF - Simple json object parsing is failed!");
         }
     }

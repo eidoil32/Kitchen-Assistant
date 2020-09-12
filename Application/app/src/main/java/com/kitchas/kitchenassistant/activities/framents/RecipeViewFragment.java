@@ -35,9 +35,16 @@ import java.util.Map;
 public class RecipeViewFragment extends Fragment {
     private FragmentActivity listener;
     private String recipe_id;
+    private Recipe recipe;
 
     public RecipeViewFragment(String recipe_id) {
         this.recipe_id = recipe_id;
+        this.recipe = null;
+    }
+
+    public RecipeViewFragment(Recipe recipe) {
+        this.recipe_id = recipe.getId();
+        this.recipe = recipe;
     }
 
     // This event fires 1st, before creation of fragment or any views
@@ -72,17 +79,21 @@ public class RecipeViewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ProgressDialog progress = Tools.showLoading(view.getContext());
-        Recipe.loadRecipeByID(this.recipe_id, this.getContext(), _recipe -> {
-            if (_recipe instanceof Recipe) {
-                Recipe recipe = (Recipe) _recipe;
-                loadRecipe(recipe);
-                progress.dismiss();
-            }
-        }, error -> {
-            System.out.println("Error loading recipe");
-            System.out.println(error);
-        });
+        if (this.recipe == null) {
+            ProgressDialog progress = Tools.showLoading(view.getContext());
+            Recipe.loadRecipeByID(this.recipe_id, this.getContext(), _recipe -> {
+                if (_recipe instanceof Recipe) {
+                    Recipe recipe = (Recipe) _recipe;
+                    loadRecipe(recipe);
+                    progress.dismiss();
+                }
+            }, error -> {
+                System.out.println("Error loading recipe");
+                System.out.println(error);
+            });
+        } else {
+            loadRecipe(this.recipe);
+        }
     }
 
     private void loadRecipe(Recipe recipe) {

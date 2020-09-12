@@ -1,5 +1,9 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe.instructions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,6 +12,15 @@ public class Instructions {
 
     public Instructions() {
         this.steps = new LinkedList<>();
+    }
+
+    public static JSONArray convertToJSON(Instructions instructions) throws JSONException {
+        JSONArray json = new JSONArray();
+        for (int i = 0; i < instructions.steps.size(); i++) {
+            json.put(instructions.steps.get(i).parseJSON(i + 1));
+        }
+
+        return json;
     }
 
     public boolean isEmpty() {
@@ -29,5 +42,9 @@ public class Instructions {
         }
 
         return steps.toString();
+    }
+
+    public void setSteps(List<Step> instructions) {
+        this.steps = instructions;
     }
 }

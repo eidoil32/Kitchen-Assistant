@@ -1,5 +1,10 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 public enum Units {
     TEASPOON, TABLESPOON, FLUID_OUNCE, GILL, CUP, SPOONS, PINT, QUART, GALLON, MILLILITER, LITER, POUND, OUNCE, MILLIGRAM, GRAM, GRAMS,KILOGRAM, PCS,
     G, TABLESPOONS, none, ML, OZJAR, CUPS, TBSP, TSP, BULB, RD, CLOVE, GCAN,
@@ -23,4 +28,17 @@ public enum Units {
     KNOB, MEDIUMCHOPPED, STICK, CLOVEPEELEDCRUSHED, HANDFULS, JAR, GCANS, TUBS, HANDFUL, PARTS, PART, GSHREDDED, GPACK,
     SMALLCUTCHUNKS, TBLSPCHOPPED, SLICE, L, KNOBS, PODS, QT, CLOVESSLICED, TBSMINCED, LBS, POUNDS, PINCH, BAG, YOLKES,
     LITRE, CLOVESCRUSHED, LARGECHOPPED, HEAD, DROPS, YOLK, DASH, CANS, NONE;
+
+    private static List<String> all_units = null;
+
+    public static List<String> possible_units() {
+        if (all_units == null) {
+            all_units = new LinkedList<>();
+            for (Units unit : Units.values()) {
+                all_units.add(unit.name());
+            }
+        }
+
+        return all_units;
+    }
 }

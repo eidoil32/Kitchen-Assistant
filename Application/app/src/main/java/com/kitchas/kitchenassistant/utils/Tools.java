@@ -9,12 +9,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class Tools {
     public static String encrypt(String text) {
@@ -27,8 +35,8 @@ public class Tools {
         }
     }
 
-    public static int getCurrentTimeStamp() {
-        return (int) ((int)System.currentTimeMillis() / 1000L);
+    public static long getCurrentTimeStamp() {
+        return new Date().getTime();
     }
 
     public static void hideTopBar(AppCompatActivity activity) {
@@ -60,5 +68,9 @@ public class Tools {
         progress.show();
 
         return progress;
+    }
+
+    public static boolean isEmpty(TextInputEditText description) {
+        return description.getText() == null || description.getText().toString().isEmpty();
     }
 }

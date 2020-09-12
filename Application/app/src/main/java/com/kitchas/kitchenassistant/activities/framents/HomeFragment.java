@@ -2,6 +2,7 @@ package com.kitchas.kitchenassistant.activities.framents;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,7 @@ public class HomeFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        view.setBackgroundColor(Color.WHITE);
         this.title = this.listener.findViewById(R.id.recipe_list_title);
         this.title.setText(getString(R.string.LAST_VIEW_RECIPES));
         this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);

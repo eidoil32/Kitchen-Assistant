@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
@@ -70,47 +71,40 @@ public class AddRecipeStepOneFragment extends Fragment {
 
         next.setOnClickListener(next_view -> {
             BitmapDrawable drawable = (BitmapDrawable) this.image.getDrawable();
+            Bitmap bitmap = null;
             if (drawable != null) {
-                Bitmap bitmap = drawable.getBitmap();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-                byte[] image = stream.toByteArray();
-                String image_base64 = "";
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    image_base64 = Base64.getEncoder().encodeToString(stream.toByteArray());
-                } else {
-                    image_base64 = android.util.Base64.encodeToString(image, android.util.Base64.DEFAULT);
-                }
+                bitmap = drawable.getBitmap();
+            }
 
-                String recipe_title = null, recipe_description = null;
-                if (title.getEditText() != null) {
-                    recipe_title = title.getEditText().getText().toString();
-                } else {
-                    title.setError(getString(R.string.EMPTY_TITLE));
-                }
-                if (description.getEditText() != null) {
-                    recipe_description = title.getEditText().getText().toString();
-                } else {
-                    description.setError(getString(R.string.EMPTY_DESCRIPTION));
-                }
+            String recipe_title = null, recipe_description = null;
+            if (title.getEditText() != null) {
+                recipe_title = title.getEditText().getText().toString();
+            } else {
+                title.setError(getString(R.string.EMPTY_TITLE));
+            }
+            if (description.getEditText() != null) {
+                recipe_description = description.getEditText().getText().toString();
+            } else {
+                description.setError(getString(R.string.EMPTY_DESCRIPTION));
+            }
 
-                if (recipe_description != null && recipe_title != null) {
-                    Map<String, String> parameters = new HashMap<>();
-                    parameters.put("title", recipe_title);
-                    parameters.put("description", recipe_description);
-                    parameters.put("image", image_base64);
-                    parameters.put("adate", String.valueOf(Tools.getCurrentTimeStamp()));
-                    HTTPManager.getInstance().POSTRequest("user/recipes", parameters, response -> {
-                        System.out.println(response);
-                    }, error -> {
-                        AlertDialog dialog = new MaterialAlertDialogBuilder(view.getContext())
-                                .setTitle(R.string.ERROR_CREATING_RECIPE)
-                                .setPositiveButton(R.string.OK_BTN_TEXT, (dialogInterface, i) -> {
+            if (recipe_description != null && recipe_title != null) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put("title", recipe_title);
+                parameters.put("description", recipe_description);
+                parameters.put("adate", String.valueOf(Tools.getCurrentTimeStamp()));
+                HTTPManager.getInstance().POSTMultipartRequest("user/recipes", parameters, bitmap, response -> {
+                    FragmentTransaction _fragmentTransaction = ((FragmentActivity) view.getContext()).getSupportFragmentManager().beginTransaction();
+                    _fragmentTransaction.replace(R.id.main_activity_framelayout, new AddRecipeStepTwoFragment(response));
+                    _fragmentTransaction.commit();
+                }, error -> {
+                    AlertDialog dialog = new MaterialAlertDialogBuilder(view.getContext())
+                            .setTitle(R.string.ERROR_CREATING_RECIPE)
+                            .setPositiveButton(R.string.OK_BTN_TEXT, (dialogInterface, i) -> {
 
-                                })
-                                .show();
-                    }, this.listener.getApplicationContext());
-                }
+                            })
+                            .show();
+                }, this.listener.getApplicationContext());
             }
         });
 

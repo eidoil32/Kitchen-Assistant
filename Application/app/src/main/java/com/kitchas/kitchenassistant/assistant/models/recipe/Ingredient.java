@@ -1,7 +1,10 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class Ingredient {
     private String title, description;
@@ -27,6 +30,26 @@ public class Ingredient {
                 json.getString("description"),
                 json.getInt("amount"),units,
                 json.getInt("priority"));
+    }
+
+    public static JSONArray convertToJSON(List<Ingredient> ingredients) throws JSONException {
+        JSONArray json = new JSONArray();
+        for (int i = 0; i < ingredients.size(); i++) {
+            json.put(ingredients.get(i).parseJSON(i + 1));
+        }
+
+        return json;
+    }
+
+    private JSONObject parseJSON(int priority) throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("unit", this.unit);
+        json.put("title", this.title);
+        json.put("description", this.description);
+        json.put("amount", this.amount);
+        json.put("priority", priority);
+
+        return json;
     }
 
     @Override

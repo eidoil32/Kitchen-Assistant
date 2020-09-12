@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
-import com.google.gson.internal.bind.util.ISO8601Utils;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Instructions;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Step;
 import com.kitchas.kitchenassistant.assistant.user.RecipeUser;
@@ -32,11 +31,11 @@ public class Recipe {
     private String title, description;
     private Instructions instructions;
     private float rate;
-    private int edate, adate;
+    private long edate, adate;
     private int total_time; //total time in seconds
     private String image;
 
-    public Recipe(String title, RecipeUser creator, int adate, boolean new_recipe) {
+    public Recipe(String title, RecipeUser creator, long adate, boolean new_recipe) {
         this.title = title;
         this.creator = creator;
         this.adate = adate;
@@ -50,6 +49,21 @@ public class Recipe {
 
     public Recipe(String title, RecipeUser creator) {
         this(title, creator, Tools.getCurrentTimeStamp(), true);
+    }
+
+    public static Recipe fetchBasic(JSONObject recipe_base) {
+        try {
+            String title = recipe_base.getString("title");
+            RecipeUser creator = new RecipeUser(recipe_base.getString("creator"));
+            String description = recipe_base.getString("description");
+            long adate = Long.valueOf(recipe_base.getString("adate"));
+
+            Recipe recipe = new Recipe(title, creator, adate, true);
+            recipe.setId(recipe_base.getString("_id"));
+            return recipe;
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
     public void recipeIsReady() throws GeneralException {
@@ -131,19 +145,19 @@ public class Recipe {
         this.rate = rate;
     }
 
-    public int getEdate() {
+    public long getEdate() {
         return edate;
     }
 
-    public void setEdate(int edate) {
+    public void setEdate(long edate) {
         this.edate = edate;
     }
 
-    public int getAdate() {
+    public long getAdate() {
         return adate;
     }
 
-    public void setAdate(int adate) {
+    public void setAdate(long adate) {
         this.adate = adate;
     }
 
@@ -181,6 +195,7 @@ public class Recipe {
         HTTPManager.getInstance().GETRequest("user/recipes/" + recipe_id, new HashMap<String, String>(),
                 response -> {
                     try {
+                        System.out.println(response);
                         Recipe recipe = fetchRecipeFromJSON(response.getJSONObject("recipe"));
                         recipe.fetchInstructions(response.getJSONArray("instructions"));
                         recipe.fetchTags(response.getJSONArray("tags"));
@@ -325,5 +340,22 @@ public class Recipe {
             string.append(String.format("%s %d %s\n", ingredient.getTitle(), ingredient.getAmount(), ingredient.getUnit()));
         }
         return string.toString();
+    }
+
+    public void save(Context context, IOnRequest success_callback, IOnRequest error_callback) {
+        try {
+            Map<String, String> parameters = new HashMap<>();
+            JSONArray ingredients_json = Ingredient.convertToJSON(this.ingredients);
+            JSONArray instructions_json = Instructions.convertToJSON(this.instructions);
+            JSONArray tags_json = Tag.convertToJSON(this.tags);
+            parameters.put("ingredients", ingredients_json.toString());
+            parameters.put("instructions", instructions_json.toString());
+            parameters.put("tags", tags_json.toString());
+            parameters.put("recipe_id", this.id);
+            HTTPManager.getInstance().POSTRequest("user/recipes/add/complete",
+                    parameters, success_callback, error_callback, context);
+        } catch (JSONException e) {
+            error_callback.onResponse(Settings.CONVERT_TO_JSON_FAILED);
+        }
     }
 }
