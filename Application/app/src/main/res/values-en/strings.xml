@@ -82,4 +82,7 @@
     <string name="LOADING_RECIPES">Loading last viewed recipes</string>
     <string name="NO_LAST_RECIPES">You didn\'t watch any recipes, go community and watch some!</string>
     <string name="COMMUNITY_RECIPES">Community Recipes</string>
+    <string name="PROFILE_UPDATE_FAILED">Update profile failed</string>
+    <string name="UPDATE_PROFILE_PIC">Do you want to update your profile picture?</string>
+    <string name="PROFILE_UPDATE_SUCCESS">Profile updated successfully</string>
 </resources>

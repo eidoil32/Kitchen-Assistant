@@ -28,6 +28,7 @@ import java.util.Map;
 public class User extends Base {
     public static String DB_IDENTIFY = "USER_DATA";
     public static String DB_LAST_RECIPES_LIST = "RECIPES_LIST";
+    public static String DB_FAVORITE_RECIPES_LIST = "FAVORITE_RECIPES";
 
     public static User instance;
     private String email, name, avatar;
@@ -50,7 +51,7 @@ public class User extends Base {
     }
 
     public void getFullData(Context context, IOnRequest on_load_callback) {
-        HTTPManager.getInstance().GETRequest("user/profile", new HashMap<>(), response -> {
+        HTTPManager.getInstance().GETRequest("user/profile", response -> {
             try {
                 this.email = response.getString("email");
                 this.age = response.getInt("age");
@@ -222,7 +223,7 @@ public class User extends Base {
     }
 
     synchronized public void refreshData(Context context) {
-        HTTPManager.getInstance().GETRequest("users/profile", new HashMap<>(), response -> {
+        HTTPManager.getInstance().GETRequest("users/profile",response -> {
             try {
                 this.name = response.getString("name");
             } catch (JSONException ignored) {
@@ -246,5 +247,20 @@ public class User extends Base {
         }, error -> {
             System.out.println(error);
         }, context);
+    }
+
+    public void setAge(String new_age) {
+        this.age = Integer.parseInt(new_age);
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public void favoriteRecipe(Context context, String id) {
+        SQLHelper sqlHelper = new SQLHelper(context);
+        ContentValues values = new ContentValues();
+        values.put("recipe", id);
+        sqlHelper.writer.insert(DB_FAVORITE_RECIPES_LIST, null, values);
     }
 }

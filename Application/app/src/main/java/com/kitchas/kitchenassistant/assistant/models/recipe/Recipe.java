@@ -214,8 +214,7 @@ public class Recipe {
     }
 
     public static void fetchMyRecipes(Context context, IOnRequest success, IOnRequest error, int page, int limit) {
-        Map<String, String> parameters = new HashMap<>();
-        HTTPManager.getInstance().GETRequest("user/recipes", parameters, response -> {
+        HTTPManager.getInstance().GETRequest("user/recipes", response -> {
             System.out.println("In success!");
             System.out.println(response);
         }, response -> {
@@ -225,7 +224,7 @@ public class Recipe {
     }
 
     public static void loadRecipeByID(String recipe_id, Context context, GeneralCallback success_callback, IOnRequest error_callback) {
-        HTTPManager.getInstance().GETRequest("user/recipes/" + recipe_id, new HashMap<String, String>(),
+        HTTPManager.getInstance().GETRequest("user/recipes/" + recipe_id,
                 response -> {
                     try {
                         System.out.println(response);

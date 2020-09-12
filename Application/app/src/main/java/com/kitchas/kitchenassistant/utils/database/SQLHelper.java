@@ -41,6 +41,8 @@ public class SQLHelper extends SQLiteOpenHelper {
                 COLUMN_JSON + " TEXT" + ")");
         sqLiteDatabase.execSQL("CREATE TABLE " + User.DB_LAST_RECIPES_LIST +
                 "(recipe TEXT)");
+        sqLiteDatabase.execSQL("CREATE TABLE " + User.DB_FAVORITE_RECIPES_LIST +
+                "(recipe TEXT)");
     }
 
     @Override

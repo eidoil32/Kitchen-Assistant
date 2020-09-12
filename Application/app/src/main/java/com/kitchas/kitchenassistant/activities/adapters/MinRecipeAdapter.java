@@ -24,7 +24,9 @@ import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
 import com.kitchas.kitchenassistant.activities.MainActivity;
 import com.kitchas.kitchenassistant.activities.fragments.RecipeViewFragment;
+import com.kitchas.kitchenassistant.activities.helpers.DoubleClickListener;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
+import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Settings;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +56,29 @@ public class MinRecipeAdapter extends BaseAdapter<Recipe> {
             view_holder = (ViewHolder) convertView.getTag();
         }
 
+        view_holder.favorite_image.bringToFront();
         if (recipe != null) {
+            view_holder.getView().setOnClickListener(new DoubleClickListener() {
+                @Override
+                public void onSingleClick(View v) {
+                    // do nothing
+                }
+
+                @Override
+                public void onDoubleClick(View v) {
+                    User.getInstance(context).favoriteRecipe(context, recipe.getId());
+                    view_holder.favorite_image.setVisibility(View.VISIBLE);
+                    view_holder.favorite_image.animate().
+                            scaleX(1.4f).alpha(0.5f).
+                            scaleY(1.4f).withEndAction(() -> {
+                                view_holder.favorite_image.setVisibility(View.GONE);
+                                view_holder.favorite_image.setAlpha(1f);
+                                view_holder.favorite_image.setScaleX(1f);
+                                view_holder.favorite_image.setScaleY(1f);
+                            }).setDuration(500).start();
+                }
+            });
+
             view_holder.title.setText(recipe.getTitle());
             view_holder.description.setText(recipe.getDescription());
             if (recipe.getImage() != null && !recipe.getImage().isEmpty()) {
@@ -94,7 +118,7 @@ public class MinRecipeAdapter extends BaseAdapter<Recipe> {
         final Button show_more;
         final View view;
         final RatingBar rating_bar;
-        final ImageView recipe_image;
+        final ImageView recipe_image, favorite_image;
 
         ViewHolder(View view) {
             super(view);
@@ -106,6 +130,7 @@ public class MinRecipeAdapter extends BaseAdapter<Recipe> {
             this.show_more = view.findViewById(R.id.adapter_last_recipe_show_more);
             this.rating_bar = view.findViewById(R.id.adapter_last_recipe_rating_bar);
             this.rating_value = view.findViewById(R.id.adapter_last_recipe_rating_text);
+            this.favorite_image = view.findViewById(R.id.adapter_last_recipe_favorite);
         }
 
         public View getView() {

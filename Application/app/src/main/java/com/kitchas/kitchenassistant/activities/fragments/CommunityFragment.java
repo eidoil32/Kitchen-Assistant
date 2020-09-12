@@ -5,9 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.MinRecipeAdapter;
+import com.kitchas.kitchenassistant.activities.helpers.DoubleClickListener;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
@@ -88,12 +91,7 @@ public class CommunityFragment extends Fragment
         this.title = this.listener.findViewById(R.id.community_recipe_list_title);
         this.title.setText(getString(R.string.COMMUNITY_RECIPES));
         this.recipes_list_view = this.listener.findViewById(R.id.community_main_last_recipes_list_view);
-
         this.loadRecipes();
-        this.recipes_list_view.setOnItemClickListener((adapterView, view1, position, id) -> {
-            Recipe recipe = (Recipe) adapterView.getItemAtPosition(position);
-        });
-
         this.swipe_refresh_layout = this.listener.findViewById(R.id.community_swipe_container);
         this.swipe_refresh_layout.setOnRefreshListener(this);
     }

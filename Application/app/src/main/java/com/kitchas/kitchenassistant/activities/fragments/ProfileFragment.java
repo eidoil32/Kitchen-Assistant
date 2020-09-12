@@ -1,26 +1,46 @@
 package com.kitchas.kitchenassistant.activities.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.assistant.user.User;
+import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
+import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
+
+import org.json.JSONException;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment{
     protected FragmentActivity listener;
     private User user;
+    private ImageView image;
 
     public ProfileFragment(User user) {
         this.user = user;
@@ -58,13 +78,17 @@ public class ProfileFragment extends Fragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TextView name = this.listener.findViewById(R.id.profile_name);
-        ImageView image = this.listener.findViewById(R.id.profile_image);
+        this.image = this.listener.findViewById(R.id.profile_image);
         TextInputLayout email = this.listener.findViewById(R.id.profile_email);
         TextInputLayout age = this.listener.findViewById(R.id.profile_age);
         Button save = this.listener.findViewById(R.id.profile_save);
 
+        String user_age = String.valueOf(user.getAge());
+
         email.getEditText().setText(user.getEmail());
-        age.getEditText().setText(String.valueOf(user.getAge()));
+        if (user.getAge() != 0) {
+            age.getEditText().setText(String.valueOf(user.getAge()));
+        }
         if (user.getAvatar() == null) {
             image.setImageResource(R.drawable.avatar);
         } else {
@@ -74,6 +98,27 @@ public class ProfileFragment extends Fragment{
                     .into(image);
         }
         name.setText(user.getName());
+
+        image.setOnClickListener(view1 -> {
+            Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pickPhoto , 1); //one can be replaced with any action code
+        });
+
+        save.setOnClickListener(view1 -> {
+            if (age.getEditText() != null &&
+                    !age.getEditText().getText().toString().equals(user_age)) {
+                Map<String, String> params = new HashMap<>();
+                params.put("age", age.getEditText().getText().toString());
+                HTTPManager.getInstance().PATCHRequest("users/profile", params, response -> {
+                    user.setAge(age.getEditText().getText().toString());
+                    age.clearFocus();
+                    Toast.makeText(this.listener, R.string.PROFILE_UPDATE_SUCCESS, Toast.LENGTH_SHORT).show();
+                }, error -> {
+                    Toast.makeText(this.listener, R.string.PROFILE_UPDATE_FAILED, Toast.LENGTH_SHORT).show();
+                }, this.listener);
+            }
+        });
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -90,5 +135,39 @@ public class ProfileFragment extends Fragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case 0:
+            case 1:
+                if(resultCode == RESULT_OK){
+                    androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(this.listener)
+                            .setTitle(R.string.UPDATE_PROFILE_PIC)
+                            .setPositiveButton(R.string.NEXT_BTN, (dialogInterface, buttonPressed) -> {
+                                Uri selectedImage = imageReturnedIntent.getData();
+                                this.image.setImageURI(selectedImage);
+                                try {
+                                    Bitmap bitmap =  MediaStore.Images.Media.getBitmap(this.listener.getContentResolver(), selectedImage);
+                                    HTTPManager.getInstance().POSTMultipartRequest(
+                                            "user/me/avatar", new HashMap<>(), bitmap, response -> {
+                                                try {
+                                                    user.setAvatar(response.getString("avatar"));
+                                                    Toast.makeText(this.listener, R.string.PROFILE_UPDATE_SUCCESS, Toast.LENGTH_SHORT).show();
+                                                } catch (JSONException ignored) {}
+                                            }, error -> {
+                                                Toast.makeText(this.listener, R.string.PROFILE_UPDATE_FAILED, Toast.LENGTH_LONG).show();
+                                            }, this.listener);
+                                } catch (Exception ignored) {
+                                    Toast.makeText(this.listener, R.string.PROFILE_UPDATE_FAILED, Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setNegativeButton(R.string.CANCEL_BTN, (dialogInterface, buttonPressed) -> {})
+                            .show();
+                }
+                break;
+        }
     }
 }

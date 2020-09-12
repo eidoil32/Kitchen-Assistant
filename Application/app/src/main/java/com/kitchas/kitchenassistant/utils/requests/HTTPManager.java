@@ -85,8 +85,12 @@ public class HTTPManager {
         this.sendHTTPRequest(endpoint, parameters, Request.Method.POST, success_callback, error_callback, context);
     }
 
-    public void GETRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback, Context context) {
-        this.sendHTTPRequest(endpoint, parameters, Request.Method.GET, success_callback, error_callback, context);
+    public void GETRequest(String endpoint, IOnRequest success_callback, IOnRequest error_callback, Context context) {
+        this.sendHTTPRequest(endpoint, new HashMap<>(), Request.Method.GET, success_callback, error_callback, context);
+    }
+
+    public void PATCHRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback, Context context) {
+        this.sendHTTPRequest(endpoint, parameters, Request.Method.PATCH, success_callback, error_callback, context);
     }
 
     public void POSTMultipartRequest(String endpoint, Map<String, String> parameters,Bitmap image, IOnRequest success_callback, IOnRequest error_callback, Context context) {
