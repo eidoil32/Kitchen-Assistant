@@ -8,6 +8,7 @@ import com.google.gson.internal.bind.util.ISO8601Utils;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Instructions;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Step;
 import com.kitchas.kitchenassistant.assistant.user.RecipeUser;
+import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Settings;
 import com.kitchas.kitchenassistant.utils.Tools;
@@ -162,13 +163,19 @@ public class Recipe {
         return null;
     }
 
-    public static void fetchLastViewedRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit) {
+    public static void fetchLastViewedRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit, List<String> recipes_ids) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("limit", "10");
-        parameters.put("page", "1");
-        HTTPManager.getInstance().request("community/recipes", parameters, Request.Method.GET, response -> {
-            if (response instanceof JSONArray) {
-                fetchRecipesJSONArray((JSONArray)response, success_callback);
+        parameters.put("limit", String.valueOf(limit));
+        parameters.put("page", String.valueOf(page));
+        parameters.put("recipes", new JSONArray(recipes_ids).toString());
+        User user = User.getInstance(context);
+        HTTPManager.getInstance().POSTRequest("user/lastrecipes/load", parameters, response -> {
+            try {
+                JSONArray recipes = response.getJSONArray("recipes");
+                fetchRecipesJSONArray(recipes, success_callback);
+                user.removeSavedRecipes(context, response.getJSONArray("removed"));
+            } catch (JSONException e) {
+                error_callback.onResponse(Settings.UNKNOWN_ERROR);
             }
         }, error -> {
             System.out.println("Failed!");

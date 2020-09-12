@@ -31,6 +31,7 @@ public class HomeFragment extends Fragment
     protected BaseAdapter adapter;
     protected ListView recipes_list_view;
     protected TextView title;
+    private List<String> last_viewed_recipes;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -52,19 +53,21 @@ public class HomeFragment extends Fragment
     }
 
     protected void loadRecipes() {
-        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
-        Recipe.fetchLastViewedRecipes(this.listener, recipes -> {
-            List<Recipe> recipeList = (List<Recipe>)recipes;
-            if (recipeList.isEmpty()) {
-                this.recipes_list_view.setVisibility(View.INVISIBLE);
-                this.title.setText(R.string.NO_LAST_RECIPES);
-            } else {
-                this.recipes_list_view.setVisibility(View.VISIBLE);
-                this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-                this.recipes_list_view.setAdapter(adapter);
-            }
-            progress.dismiss();
-        }, response -> {}, 1, 10);
+        if (!this.last_viewed_recipes.isEmpty()) {
+            ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+            Recipe.fetchLastViewedRecipes(this.listener, recipes -> {
+                List<Recipe> recipeList = (List<Recipe>)recipes;
+                if (recipeList.isEmpty()) {
+                    this.recipes_list_view.setVisibility(View.INVISIBLE);
+                    this.title.setText(R.string.NO_LAST_RECIPES);
+                } else {
+                    this.recipes_list_view.setVisibility(View.VISIBLE);
+                    this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+                    this.recipes_list_view.setAdapter(adapter);
+                }
+                progress.dismiss();
+            }, response -> {}, 1, 10, this.last_viewed_recipes);
+        }
     }
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,
@@ -81,7 +84,8 @@ public class HomeFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         User user = User.getInstance(view.getContext());
-        user.getLastViewedRecipes(view.getContext());
+        user.saveRecipeToLastViewed(view.getContext(), "5f5cc59e292b551d24bf60fb");
+        this.last_viewed_recipes = user.getLastViewedRecipes(view.getContext());
         this.title = this.listener.findViewById(R.id.recipe_list_title);
         this.title.setText(getString(R.string.LAST_VIEW_RECIPES));
         this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);

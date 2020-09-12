@@ -15,6 +15,7 @@ import com.kitchas.kitchenassistant.utils.requests.API;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,7 +49,7 @@ public class User extends Base {
     }
 
     public void getFullData(Context context, IOnRequest on_load_callback) {
-        HTTPManager.getInstance().GETRequest("user/profile",new HashMap<>(), response -> {
+        HTTPManager.getInstance().GETRequest("user/profile", new HashMap<>(), response -> {
             try {
                 this.email = response.getString("email");
                 this.age = response.getInt("age");
@@ -128,7 +129,8 @@ public class User extends Base {
     }
 
     public void setData(String user_data_json) {
-        Type empMapType = new TypeToken<Map<String, String>>() {}.getType();
+        Type empMapType = new TypeToken<Map<String, String>>() {
+        }.getType();
         Map<String, String> user_data = new Gson().fromJson(user_data_json, empMapType);
         this.email = user_data.get("email");
         HTTPManager.getInstance().setToken(user_data.get("TOKEN"));
@@ -150,7 +152,7 @@ public class User extends Base {
         return this.name;
     }
 
-    public List<String> getLastViewedRecipes(Context context) {
+    synchronized public List<String> getLastViewedRecipes(Context context) {
         SQLHelper database = new SQLHelper(context);
         Cursor cursor = database.reader.query(
                 User.DB_LAST_RECIPES_LIST,
@@ -159,7 +161,7 @@ public class User extends Base {
         if (cursor.getCount() > 0) {
             try {
                 for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                    System.out.println(cursor.getString(0));
+                    results.add(cursor.getString(0));
                 }
             } catch (Exception e) {
                 return results;
@@ -181,6 +183,16 @@ public class User extends Base {
         }
 
         return exists;
+    }
+
+    public void removeSavedRecipes(Context context, JSONArray deleted) throws JSONException {
+        SQLHelper database = new SQLHelper(context);
+        for (int i = 0; i < deleted.length(); i++) {
+            database.writer.delete(User.DB_LAST_RECIPES_LIST,
+                    "recipe = ?",
+                    new String[]{deleted.getString(i)}
+                    );
+        }
     }
 
     private boolean checkAlreadySaved(Context context, String recipe_id) {
