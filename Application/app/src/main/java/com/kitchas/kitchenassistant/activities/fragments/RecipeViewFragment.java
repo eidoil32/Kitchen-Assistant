@@ -1,4 +1,4 @@
-package com.kitchas.kitchenassistant.activities.framents;
+package com.kitchas.kitchenassistant.activities.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -89,7 +89,7 @@ public class RecipeViewFragment extends Fragment {
                     loadRecipe(recipe);
 
                     User user = User.getInstance(view.getContext());
-                    user.saveRecipeToLastViewed(view.getContext(), this.recipe.getId());
+                    user.saveRecipeToLastViewed(view.getContext(), recipe.getId());
 
                     progress.dismiss();
                 }
@@ -126,7 +126,7 @@ public class RecipeViewFragment extends Fragment {
         BaseAdapter adapter = new FullRecipeDetailAdapter(this.listener, R.layout.adapter_view_recipe_full, details);
         full_details.setAdapter(adapter);
         TextView total_time = (TextView) this.listener.findViewById(R.id.view_recipe_total_time_text);
-        total_time.setText(String.format("%d hours", recipe.getTotal_time()));
+        total_time.setText(recipe.getTotalTimeCook());
         this.listener.findViewById(R.id.view_recipe_clock_time_icon).setVisibility(View.VISIBLE);
     }
 

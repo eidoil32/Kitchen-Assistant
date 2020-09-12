@@ -170,6 +170,17 @@ public class Recipe {
         this.total_time = total_time;
     }
 
+    public String getTotalTimeCook() {
+        float total_time_calc = this.total_time;
+        String time_units = "min";
+        if (total_time_calc > 60) {
+            time_units = "hours";
+            total_time_calc /= 60;
+        }
+
+        return String.format("%.0f %s", total_time_calc, time_units);
+    }
+
     public static Recipe getRecipeFromJSON(JSONObject jsonObject) {
         // TODO implement this method, response from server will be in JSON format
         // so we need to convert json to recipe.
@@ -276,7 +287,7 @@ public class Recipe {
         Recipe recipe = new Recipe(json.getString("title"), creator, json.getInt("adate"), false);
         recipe.setId(json.getString("_id"));
         recipe.setRate(Float.parseFloat(json.getString("rate")));
-        recipe.setTotal_time(100);
+        recipe.setTotal_time(json.getInt("totalTime"));
         recipe.setDescription(json.getString("description"));
         try {
             String image = json.getString("image");

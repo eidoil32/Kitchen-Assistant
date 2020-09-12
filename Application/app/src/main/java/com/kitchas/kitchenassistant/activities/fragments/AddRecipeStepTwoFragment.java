@@ -1,4 +1,4 @@
-package com.kitchas.kitchenassistant.activities.framents;
+package com.kitchas.kitchenassistant.activities.fragments;
 
 import android.app.Activity;
 import android.content.Context;

@@ -9,17 +9,21 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepOneFragment;
 import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepTwoFragment;
 import com.kitchas.kitchenassistant.activities.framents.HomeFragment;
 import com.kitchas.kitchenassistant.activities.framents.SearchResultsFragment;
+import com.kitchas.kitchenassistant.activities.framents.TabAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
@@ -41,7 +45,7 @@ public class MainActivity extends BaseActivity
     private ImageView search_icon_view;
     private static FloatingActionButton fab;
     private boolean listenToSpeech = false;
-
+    private ViewPager viewPager;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,24 +72,41 @@ public class MainActivity extends BaseActivity
     private void start() {
         setContentView(R.layout.activity_application);
         Tools.hideTopBar(this);
+        TabLayout tabLayout = findViewById(R.id.main_toolbar_layout);
+        viewPager = findViewById(R.id.main_activity_framelayout);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final TabAdapter tabs_adapter = new TabAdapter(this, getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(tabs_adapter);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+//                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         // Set all view of activity
         this.search_icon_view = findViewById(R.id.main_search_icon);
         this.search_bar = findViewById(R.id.searchBar);
         this.search_bar.bringToFront();
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_framelayout, new HomeFragment());
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-
         fab = findViewById(R.id.fab_add_recipe);
         fab.setOnClickListener(view -> {
-            FragmentTransaction _fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            _fragmentTransaction.replace(R.id.main_activity_framelayout, new AddRecipeStepOneFragment());
-            _fragmentTransaction.addToBackStack(null);
-            _fragmentTransaction.commit();
-            fab.hide();
-            this.findViewById(R.id.main_toolbar_layout).setVisibility(View.GONE);
+            Intent intent = new Intent(MainActivity.this, AddRecipeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            startActivity(intent);
         });
         setSearchBarActions();
     }
@@ -162,18 +183,6 @@ public class MainActivity extends BaseActivity
             case MaterialSearchBar.BUTTON_BACK:
                 search_bar.closeSearch();
                 break;
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        FragmentManager mgr = getSupportFragmentManager();
-        if (mgr.getBackStackEntryCount() == 0) {
-            super.onBackPressed();
-        } else {
-            mgr.popBackStack();
-            MainActivity.getFab().show();
-            this.findViewById(R.id.main_toolbar_layout).setVisibility(View.VISIBLE);
         }
     }
 }

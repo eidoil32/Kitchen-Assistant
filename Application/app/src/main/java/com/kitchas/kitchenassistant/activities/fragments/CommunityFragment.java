@@ -1,15 +1,14 @@
-package com.kitchas.kitchenassistant.activities.framents;
+package com.kitchas.kitchenassistant.activities.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,21 +16,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
-import com.kitchas.kitchenassistant.assistant.user.User;
+import com.kitchas.kitchenassistant.utils.Tools;
 
 import java.util.List;
 
-public class ProfileFragment extends Fragment{
+public class CommunityFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener{
     protected FragmentActivity listener;
-    private User user;
+    protected SwipeRefreshLayout swipe_refresh_layout;
+    protected BaseAdapter adapter;
+    protected ListView recipes_list_view;
+    protected TextView title;
 
-    public ProfileFragment(User user) {
-        this.user = user;
-    }
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
     // This does not mean the Activity is fully initialized.
@@ -51,11 +50,28 @@ public class ProfileFragment extends Fragment{
         super.onCreate(savedInstanceState);
     }
 
+    protected void loadRecipes() {
+        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+        Recipe.fetchCommunityRecipes(this.listener, recipes -> {
+            List<Recipe> recipeList = (List<Recipe>)recipes;
+            if (recipeList.isEmpty()) {
+                this.recipes_list_view.setVisibility(View.INVISIBLE);
+                this.title.setText(R.string.NO_LAST_RECIPES);
+            } else {
+                this.recipes_list_view.setVisibility(View.VISIBLE);
+                this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+                this.recipes_list_view.setAdapter(adapter);
+            }
+            progress.dismiss();
+        }, response -> {}, 1, 10);
+
+    }
+
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_profile, parent, false);
+        return inflater.inflate(R.layout.activity_recipe_list, parent, false);
     }
 
     // This event is triggered soon after onCreateView().
@@ -64,13 +80,17 @@ public class ProfileFragment extends Fragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView name = this.listener.findViewById(R.id.profile_name);
-        ImageView image = this.listener.findViewById(R.id.profile_image);
-        TextInputLayout email = this.listener.findViewById(R.id.profile_email);
-        TextInputLayout age = this.listener.findViewById(R.id.profile_age);
-        Button save = this.listener.findViewById(R.id.profile_save);
+        view.setBackgroundColor(Color.WHITE);
+        this.title = this.listener.findViewById(R.id.recipe_list_title);
+        this.title.setText(getString(R.string.COMMUNITY_RECIPES));
+        this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);
+        this.loadRecipes();
+        this.recipes_list_view.setOnItemClickListener((adapterView, view1, position, id) -> {
+            Recipe recipe = (Recipe) adapterView.getItemAtPosition(position);
+        });
 
-        email.getEditText().setText(user.getEmail());
+        this.swipe_refresh_layout = this.listener.findViewById(R.id.swipe_container);
+        this.swipe_refresh_layout.setOnRefreshListener(this);
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -87,5 +107,12 @@ public class ProfileFragment extends Fragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onRefresh() {
+        this.swipe_refresh_layout.setRefreshing(true);
+        this.loadRecipes();
+        this.swipe_refresh_layout.setRefreshing(false);
     }
 }

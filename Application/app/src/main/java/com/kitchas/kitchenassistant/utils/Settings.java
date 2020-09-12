@@ -24,7 +24,7 @@ public class Settings {
         if (!ENV.equals("DEV")) {
             SERVER_URL = "https://kitchen-assistant.herokuapp.com/api/";
         } else {
-            SERVER_URL = "http://77.124.55.121:3000/api/";
+            SERVER_URL = "http://77.127.44.115:3000/api/";
         }
     }
     public static JSONObject UNKNOWN_ERROR;

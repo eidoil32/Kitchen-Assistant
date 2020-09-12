@@ -81,4 +81,5 @@
     <string name="LOAD_USER_DATA_FAILED">Sorry! loading user data failed</string>
     <string name="LOADING_RECIPES">Loading last viewed recipes</string>
     <string name="NO_LAST_RECIPES">You didn\'t watch any recipes, go community and watch some!</string>
+    <string name="COMMUNITY_RECIPES">Community Recipes</string>
 </resources>
