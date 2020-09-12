@@ -1,12 +1,14 @@
 package com.kitchas.kitchenassistant.activities.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;;
 import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -19,20 +21,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
 import com.kitchas.kitchenassistant.activities.MainActivity;
-import com.kitchas.kitchenassistant.activities.framents.RecipeViewFragment;
+import com.kitchas.kitchenassistant.activities.fragments.RecipeViewFragment;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.utils.Settings;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
-public class LastRecipeAdapter extends BaseAdapter<Recipe> {
+public class MinRecipeAdapter extends BaseAdapter<Recipe> {
     public static int num = 0;
 
-    public LastRecipeAdapter(@NonNull Context context, int resource, List<Recipe> recipes) {
+    public MinRecipeAdapter(@NonNull Context context, int resource, List<Recipe> recipes) {
         super(context, resource, recipes);
     }
 
@@ -75,11 +79,10 @@ public class LastRecipeAdapter extends BaseAdapter<Recipe> {
             });
             view_holder.total_time.setText(recipe.getTotalTimeCook());
             view_holder.show_more.setOnClickListener(view -> {
+                MainActivity.showRecipeView();
                 FragmentTransaction fragmentTransaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.main_activity_framelayout, new RecipeViewFragment(recipe.getId()));
-                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.main_activity_recipe_view_frame, new RecipeViewFragment(recipe.getId()));
                 fragmentTransaction.commit();
-                MainActivity.getFab().hide();
             });
         }
 

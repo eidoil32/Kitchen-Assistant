@@ -31,7 +31,8 @@ public class TabAdapter extends FragmentPagerAdapter {
                 FavoritesFragment favorites_fragment = new FavoritesFragment();
                 return favorites_fragment;
             case 3:
-                ProfileFragment profile_fragment = new ProfileFragment(User.getInstance(this.context));
+                User user = User.getInstance(this.context);
+                ProfileFragment profile_fragment = new ProfileFragment(user);
                 return profile_fragment;
             default:
                 return null;

@@ -6,24 +6,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
-import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
-
-import java.util.List;
 
 public class ProfileFragment extends Fragment{
     protected FragmentActivity listener;
@@ -71,6 +64,16 @@ public class ProfileFragment extends Fragment{
         Button save = this.listener.findViewById(R.id.profile_save);
 
         email.getEditText().setText(user.getEmail());
+        age.getEditText().setText(String.valueOf(user.getAge()));
+        if (user.getAvatar() == null) {
+            image.setImageResource(R.drawable.avatar);
+        } else {
+            Glide.with(view)
+                    .load(user.getAvatar())
+                    .centerCrop()
+                    .into(image);
+        }
+        name.setText(user.getName());
     }
 
     // This method is called when the fragment is no longer connected to the Activity

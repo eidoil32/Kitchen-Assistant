@@ -1,5 +1,6 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
@@ -317,9 +318,8 @@ public class Recipe {
 
     public static void fetchCommunityRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("limit", "10");
-        parameters.put("page", "1");
-        HTTPManager.getInstance().request("community/recipes", parameters, Request.Method.GET, response -> {
+        @SuppressLint("DefaultLocale") String endpoint = String.format("community/recipes?limit=%d&page=%d", limit, page);
+        HTTPManager.getInstance().request(endpoint, parameters, Request.Method.GET, response -> {
             if (response instanceof JSONArray) {
                 fetchRecipesJSONArray((JSONArray)response, success_callback);
             }

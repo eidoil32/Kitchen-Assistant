@@ -33,6 +33,7 @@ public class User extends Base {
     private String email, name, avatar;
     private int age;
     private boolean logged_in = false;
+    private String id;
 
     private User(Context context) {
         this.logged_in = readFromLocal(context);
@@ -191,7 +192,7 @@ public class User extends Base {
             database.writer.delete(User.DB_LAST_RECIPES_LIST,
                     "recipe = ?",
                     new String[]{deleted.getString(i)}
-                    );
+            );
         }
     }
 
@@ -218,5 +219,32 @@ public class User extends Base {
             this.logged_in = true;
             HTTPManager.getInstance().setToken(token);
         }
+    }
+
+    synchronized public void refreshData(Context context) {
+        HTTPManager.getInstance().GETRequest("users/profile", new HashMap<>(), response -> {
+            try {
+                this.name = response.getString("name");
+            } catch (JSONException ignored) {
+            }
+            try {
+                this.email = response.getString("email");
+            } catch (JSONException ignored) {
+            }
+            try {
+                this.id = response.getString("_id");
+            } catch (JSONException ignored) {
+            }
+            try {
+                this.age = response.getInt("age");
+            } catch (JSONException ignored) {
+            }
+            try {
+                this.avatar = response.getString("avatar");
+            } catch (JSONException ignored) {
+            }
+        }, error -> {
+            System.out.println(error);
+        }, context);
     }
 }

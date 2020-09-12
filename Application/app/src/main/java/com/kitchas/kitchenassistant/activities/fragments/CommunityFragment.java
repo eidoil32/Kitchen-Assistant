@@ -14,22 +14,25 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
+import com.kitchas.kitchenassistant.activities.adapters.MinRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.utils.Tools;
+import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 import java.util.List;
 
 public class CommunityFragment extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener{
+        implements SwipyRefreshLayout.OnRefreshListener{
     protected FragmentActivity listener;
-    protected SwipeRefreshLayout swipe_refresh_layout;
+    protected SwipyRefreshLayout swipe_refresh_layout;
     protected BaseAdapter adapter;
     protected ListView recipes_list_view;
     protected TextView title;
+    private int page;
+    private List<Recipe> recipe_list;
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -52,18 +55,19 @@ public class CommunityFragment extends Fragment
 
     protected void loadRecipes() {
         ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+        this.page = 1;
         Recipe.fetchCommunityRecipes(this.listener, recipes -> {
-            List<Recipe> recipeList = (List<Recipe>)recipes;
-            if (recipeList.isEmpty()) {
+            recipe_list = (List<Recipe>)recipes;
+            if (recipe_list.isEmpty()) {
                 this.recipes_list_view.setVisibility(View.INVISIBLE);
                 this.title.setText(R.string.NO_LAST_RECIPES);
             } else {
                 this.recipes_list_view.setVisibility(View.VISIBLE);
-                this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+                this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list);
                 this.recipes_list_view.setAdapter(adapter);
             }
             progress.dismiss();
-        }, response -> {}, 1, 10);
+        }, response -> {}, this.page, 10);
 
     }
 
@@ -71,7 +75,7 @@ public class CommunityFragment extends Fragment
     // either dynamically or via XML layout inflation.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_recipe_list, parent, false);
+        return inflater.inflate(R.layout.activity_community_recipes, parent, false);
     }
 
     // This event is triggered soon after onCreateView().
@@ -81,15 +85,16 @@ public class CommunityFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.setBackgroundColor(Color.WHITE);
-        this.title = this.listener.findViewById(R.id.recipe_list_title);
+        this.title = this.listener.findViewById(R.id.community_recipe_list_title);
         this.title.setText(getString(R.string.COMMUNITY_RECIPES));
-        this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);
+        this.recipes_list_view = this.listener.findViewById(R.id.community_main_last_recipes_list_view);
+
         this.loadRecipes();
         this.recipes_list_view.setOnItemClickListener((adapterView, view1, position, id) -> {
             Recipe recipe = (Recipe) adapterView.getItemAtPosition(position);
         });
 
-        this.swipe_refresh_layout = this.listener.findViewById(R.id.swipe_container);
+        this.swipe_refresh_layout = this.listener.findViewById(R.id.community_swipe_container);
         this.swipe_refresh_layout.setOnRefreshListener(this);
     }
 
@@ -110,9 +115,34 @@ public class CommunityFragment extends Fragment
     }
 
     @Override
-    public void onRefresh() {
-        this.swipe_refresh_layout.setRefreshing(true);
-        this.loadRecipes();
-        this.swipe_refresh_layout.setRefreshing(false);
+    public void onRefresh(SwipyRefreshLayoutDirection direction) {
+        switch (direction) {
+            case TOP:
+                this.swipe_refresh_layout.setRefreshing(true);
+                this.loadRecipes();
+                this.swipe_refresh_layout.setRefreshing(false);
+                break;
+            case BOTTOM:
+                this.swipe_refresh_layout.setRefreshing(true);
+                this.loadMoreRecipes();
+                this.swipe_refresh_layout.setRefreshing(false);
+                break;
+        }
+    }
+
+    private void loadMoreRecipes() {
+        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+        Recipe.fetchCommunityRecipes(this.listener, recipes -> {
+            List<Recipe> recipes_results = (List<Recipe>)recipes;
+            if (!recipe_list.isEmpty()) {
+                System.out.println(recipe_list.get(0).getTitle());
+                this.recipe_list.addAll(recipes_results);
+                this.recipes_list_view.setVisibility(View.VISIBLE);
+                this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list);
+                this.recipes_list_view.setAdapter(adapter);
+                this.recipes_list_view.setSelection(((this.page - 1) * 10) - 1);
+            }
+            progress.dismiss();
+        }, response -> {}, ++this.page, 10);
     }
 }

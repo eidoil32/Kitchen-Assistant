@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,11 +20,11 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepOneFragment;
-import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepTwoFragment;
-import com.kitchas.kitchenassistant.activities.framents.HomeFragment;
-import com.kitchas.kitchenassistant.activities.framents.SearchResultsFragment;
-import com.kitchas.kitchenassistant.activities.framents.TabAdapter;
+import com.kitchas.kitchenassistant.activities.fragments.AddRecipeStepOneFragment;
+import com.kitchas.kitchenassistant.activities.fragments.AddRecipeStepTwoFragment;
+import com.kitchas.kitchenassistant.activities.fragments.HomeFragment;
+import com.kitchas.kitchenassistant.activities.fragments.SearchResultsFragment;
+import com.kitchas.kitchenassistant.activities.fragments.TabAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
@@ -46,10 +47,22 @@ public class MainActivity extends BaseActivity
     private static FloatingActionButton fab;
     private boolean listenToSpeech = false;
     private ViewPager viewPager;
+    private static FrameLayout frameLayout;
+
+    public static void showRecipeView() {
+        frameLayout.setVisibility(View.VISIBLE);
+        frameLayout.bringToFront();
+    }
+
+    public static void hideRecipeView() {
+        frameLayout.setVisibility(View.GONE);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         User user = User.getInstance(this);
+        user.refreshData(this);
         MotionDetector.ActiveMotionDetector(this, result -> {
             if (result && !listenToSpeech) {
                 listenToSpeech = true;
@@ -72,6 +85,7 @@ public class MainActivity extends BaseActivity
     private void start() {
         setContentView(R.layout.activity_application);
         Tools.hideTopBar(this);
+        frameLayout = findViewById(R.id.main_activity_recipe_view_frame);
         TabLayout tabLayout = findViewById(R.id.main_toolbar_layout);
         viewPager = findViewById(R.id.main_activity_framelayout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -83,7 +97,7 @@ public class MainActivity extends BaseActivity
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-//                viewPager.setCurrentItem(tab.getPosition());
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -183,6 +197,15 @@ public class MainActivity extends BaseActivity
             case MaterialSearchBar.BUTTON_BACK:
                 search_bar.closeSearch();
                 break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (frameLayout.getVisibility() == View.VISIBLE) {
+            frameLayout.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
         }
     }
 }

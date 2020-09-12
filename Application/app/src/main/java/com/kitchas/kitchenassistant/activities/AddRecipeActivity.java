@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.framents.AddRecipeStepOneFragment;
+import com.kitchas.kitchenassistant.activities.fragments.AddRecipeStepOneFragment;
 
 public class AddRecipeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -18,12 +18,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.adapters.LastRecipeAdapter;
+import com.kitchas.kitchenassistant.activities.adapters.MinRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 public class HomeFragment extends Fragment
@@ -64,7 +63,7 @@ public class HomeFragment extends Fragment
                     this.title.setText(R.string.NO_LAST_RECIPES);
                 } else {
                     this.recipes_list_view.setVisibility(View.VISIBLE);
-                    this.adapter = new LastRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+                    this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
                     this.recipes_list_view.setAdapter(adapter);
                 }
                 progress.dismiss();
