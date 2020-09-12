@@ -198,9 +198,13 @@ public class User extends Base {
     }
 
     private boolean checkAlreadySaved(Context context, String recipe_id) {
+        return this.checkAlreadySaved(context, recipe_id, User.DB_LAST_RECIPES_LIST);
+    }
+
+    private boolean checkAlreadySaved(Context context, String recipe_id, String table) {
         SQLHelper database = new SQLHelper(context);
         Cursor cursor = database.reader.query(
-                User.DB_LAST_RECIPES_LIST,
+                table,
                 new String[]{"recipe"},
                 " recipe = ?",
                 new String[]{recipe_id},
@@ -258,9 +262,11 @@ public class User extends Base {
     }
 
     public void favoriteRecipe(Context context, String id) {
-        SQLHelper sqlHelper = new SQLHelper(context);
-        ContentValues values = new ContentValues();
-        values.put("recipe", id);
-        sqlHelper.writer.insert(DB_FAVORITE_RECIPES_LIST, null, values);
+        if (!this.checkAlreadySaved(context, id, DB_FAVORITE_RECIPES_LIST)) {
+            SQLHelper sqlHelper = new SQLHelper(context);
+            ContentValues values = new ContentValues();
+            values.put("recipe", id);
+            sqlHelper.writer.insert(DB_FAVORITE_RECIPES_LIST, null, values);
+        }
     }
 }
