@@ -13,6 +13,7 @@ import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Settings;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.callbacks.GeneralCallback;
+import com.kitchas.kitchenassistant.utils.database.SQLHelper;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
 
@@ -189,7 +190,7 @@ public class Recipe {
         return null;
     }
 
-    public static void fetchLastViewedRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit, List<String> recipes_ids) {
+    public static void fetchListRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit, List<String> recipes_ids) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("limit", String.valueOf(limit));
         parameters.put("page", String.valueOf(page));
@@ -326,6 +327,11 @@ public class Recipe {
             System.out.println("Failed!");
             System.out.println(error);
         }, context);
+    }
+
+    public static void fetchFavoriteRecipes(Context context, GeneralCallback success_callback, IOnRequest error_callback, int page, int limit) {
+        List<String> recipes = User.getInstance(context).getFavoriteRecipes(context);
+        fetchListRecipes(context, success_callback, error_callback, page, limit, recipes);
     }
 
     public void setId(String id) {

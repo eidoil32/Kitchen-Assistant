@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment
     protected void loadRecipes() {
         if (!this.last_viewed_recipes.isEmpty()) {
             ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
-            Recipe.fetchLastViewedRecipes(this.listener, recipes -> {
+            Recipe.fetchListRecipes(this.listener, recipes -> {
                 List<Recipe> recipeList = (List<Recipe>)recipes;
                 if (recipeList.isEmpty()) {
                     this.recipes_list_view.setVisibility(View.INVISIBLE);

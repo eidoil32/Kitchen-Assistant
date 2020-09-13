@@ -62,7 +62,6 @@ public class MainActivity extends BaseActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         User user = User.getInstance(this);
-        user.refreshData(this);
         MotionDetector.ActiveMotionDetector(this, result -> {
             if (result && !listenToSpeech) {
                 listenToSpeech = true;
@@ -77,6 +76,7 @@ public class MainActivity extends BaseActivity
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else {
+            user.refreshData(this);
             this.start();
         }
 

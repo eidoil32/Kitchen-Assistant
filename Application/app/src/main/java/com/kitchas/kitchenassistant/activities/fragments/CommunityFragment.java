@@ -28,7 +28,7 @@ import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirec
 import java.util.List;
 
 public class CommunityFragment extends Fragment
-        implements SwipyRefreshLayout.OnRefreshListener{
+        implements SwipyRefreshLayout.OnRefreshListener {
     protected FragmentActivity listener;
     protected SwipyRefreshLayout swipe_refresh_layout;
     protected BaseAdapter adapter;

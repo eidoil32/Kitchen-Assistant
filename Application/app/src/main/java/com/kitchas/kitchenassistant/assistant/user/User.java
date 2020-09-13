@@ -155,9 +155,17 @@ public class User extends Base {
     }
 
     synchronized public List<String> getLastViewedRecipes(Context context) {
+        return this.getRecipesFromDB(context, User.DB_LAST_RECIPES_LIST);
+    }
+
+    synchronized public List<String> getFavoriteRecipes(Context context) {
+        return this.getRecipesFromDB(context, User.DB_FAVORITE_RECIPES_LIST);
+    }
+
+    synchronized public List<String> getRecipesFromDB(Context context, String table) {
         SQLHelper database = new SQLHelper(context);
         Cursor cursor = database.reader.query(
-                User.DB_LAST_RECIPES_LIST,
+                table,
                 new String[]{"recipe"}, "", new String[]{}, null, null, null);
         List<String> results = new LinkedList<>();
         if (cursor.getCount() > 0) {
@@ -245,6 +253,7 @@ public class User extends Base {
             } catch (JSONException ignored) {
             }
             try {
+
                 this.avatar = response.getString("avatar");
             } catch (JSONException ignored) {
             }
@@ -262,11 +271,13 @@ public class User extends Base {
     }
 
     public void favoriteRecipe(Context context, String id) {
+        System.out.println(id);
         if (!this.checkAlreadySaved(context, id, DB_FAVORITE_RECIPES_LIST)) {
             SQLHelper sqlHelper = new SQLHelper(context);
             ContentValues values = new ContentValues();
             values.put("recipe", id);
-            sqlHelper.writer.insert(DB_FAVORITE_RECIPES_LIST, null, values);
+            long _id = sqlHelper.writer.insert(DB_FAVORITE_RECIPES_LIST, null, values);
+            System.out.println(_id);
         }
     }
 }
