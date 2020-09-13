@@ -85,7 +85,7 @@ public class RecipeViewFragment extends Fragment {
 
                     User user = User.getInstance(view.getContext());
                     user.saveRecipeToLastViewed(view.getContext(), recipe.getId());
-
+                    HomeFragment.addNew(recipe);
                     progress.dismiss();
                 }
             }, error -> {

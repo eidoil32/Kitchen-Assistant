@@ -33,6 +33,13 @@ public class HomeFragment extends Fragment
     protected ListView recipes_list_view;
     protected TextView title;
     private List<String> last_viewed_recipes;
+    private static List<Recipe> recipeList;
+
+    public static void addNew(Recipe recipe) {
+       if (recipeList != null) {
+           recipeList.add(recipe);
+       }
+    }
 
     // This event fires 1st, before creation of fragment or any views
     // The onAttach method is called when the Fragment instance is associated with an Activity.
@@ -57,7 +64,7 @@ public class HomeFragment extends Fragment
         if (!this.last_viewed_recipes.isEmpty()) {
             ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
             Recipe.fetchListRecipes(this.listener, recipes -> {
-                List<Recipe> recipeList = (List<Recipe>)recipes;
+                this.recipeList = (List<Recipe>)recipes;
                 if (recipeList.isEmpty()) {
                     this.recipes_list_view.setVisibility(View.INVISIBLE);
                     this.title.setText(R.string.NO_LAST_RECIPES);

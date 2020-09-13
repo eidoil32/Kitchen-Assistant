@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
 import com.kitchas.kitchenassistant.activities.MainActivity;
+import com.kitchas.kitchenassistant.activities.fragments.FavoritesFragment;
 import com.kitchas.kitchenassistant.activities.fragments.RecipeViewFragment;
 import com.kitchas.kitchenassistant.activities.helpers.DoubleClickListener;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
@@ -67,6 +68,7 @@ public class MinRecipeAdapter extends BaseAdapter<Recipe> {
                 @Override
                 public void onDoubleClick(View v) {
                     User.getInstance(context).favoriteRecipe(context, recipe.getId());
+                    FavoritesFragment.addNewLikedRecipe(recipe);
                     view_holder.favorite_image.setVisibility(View.VISIBLE);
                     view_holder.favorite_image.animate().
                             scaleX(1.4f).alpha(0.5f).

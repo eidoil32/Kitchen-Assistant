@@ -36,7 +36,7 @@ public class FavoritesFragment extends Fragment
         implements SwipyRefreshLayout.OnRefreshListener {
     protected FragmentActivity listener;
     private int page = 1;
-    private List<Recipe> recipe_list = null;
+    private static List<Recipe> recipe_list = new LinkedList<>();
     private ListView recipes_list_view;
     private SwipyRefreshLayout swipe_layout;
     protected BaseAdapter adapter;
@@ -72,6 +72,8 @@ public class FavoritesFragment extends Fragment
 
         this.recipes_list_view = this.listener.findViewById(R.id.favorite_list_view);
         this.swipe_layout = this.listener.findViewById(R.id.favorite_swipe_container);
+        this.swipe_layout.setOnRefreshListener(this);
+        loadRecipes();
     }
 
     // This method is called when the fragment is no longer connected to the Activity
@@ -92,17 +94,39 @@ public class FavoritesFragment extends Fragment
 
     @Override
     public void onRefresh(SwipyRefreshLayoutDirection direction) {
-        this.loadRecipes();
+        this.swipe_layout.setRefreshing(true);
+        switch (direction) {
+            case TOP:
+                this.loadRecipes();
+                break;
+            case BOTTOM:
+                this.loadMoreRecipes();
+                break;
+        }
+        this.swipe_layout.setRefreshing(false);
     }
 
     private void loadRecipes() {
         ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
         Recipe.fetchFavoriteRecipes(this.listener, recipes -> {
-            if (recipe_list == null) {
-                recipe_list = new LinkedList<>();
-            }
+            recipe_list = (List<Recipe>)recipes;
+            this.recipes_list_view.setVisibility(View.VISIBLE);
+            this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list);
+            this.recipes_list_view.setAdapter(adapter);
+            progress.dismiss();
+        }, response -> {}, 1, 10);
+    }
+
+    public static void addNewLikedRecipe(Recipe recipe) {
+        if (recipe_list != null)
+            recipe_list.add(recipe);
+    }
+
+    private void loadMoreRecipes() {
+        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+        Recipe.fetchFavoriteRecipes(this.listener, recipes -> {
             List<Recipe> recipes_results = (List<Recipe>)recipes;
-            this.recipe_list.addAll(recipes_results);
+            recipe_list.addAll(recipes_results);
             this.recipes_list_view.setVisibility(View.VISIBLE);
             this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list);
             this.recipes_list_view.setAdapter(adapter);
