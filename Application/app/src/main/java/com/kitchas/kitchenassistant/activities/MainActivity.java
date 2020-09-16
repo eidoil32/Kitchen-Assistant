@@ -10,36 +10,27 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.fragments.AddRecipeStepOneFragment;
-import com.kitchas.kitchenassistant.activities.fragments.AddRecipeStepTwoFragment;
-import com.kitchas.kitchenassistant.activities.fragments.HomeFragment;
 import com.kitchas.kitchenassistant.activities.fragments.SearchResultsFragment;
 import com.kitchas.kitchenassistant.activities.fragments.TabAdapter;
-import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends BaseActivity
-        implements MaterialSearchBar.OnSearchActionListener{
+        implements MaterialSearchBar.OnSearchActionListener {
     private MaterialSearchBar search_bar;
     private DrawerLayout drawer;
     private User user = null;

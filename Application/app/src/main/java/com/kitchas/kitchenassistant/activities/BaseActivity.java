@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected int ENGINE_REQUEST_TEXT_TO_SPEECH = 10;
-    TextToSpeechManager textToSpeechManager;
+    protected TextToSpeechManager textToSpeechManager;
     protected SpeechToTextManager speechToTextManager;
     protected int SPEECH_CODE = -1;
 

@@ -13,7 +13,6 @@ import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Settings;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.callbacks.GeneralCallback;
-import com.kitchas.kitchenassistant.utils.database.SQLHelper;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
 
@@ -21,13 +20,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Recipe {
+public class Recipe implements Serializable {
     private String id;
     private List<Ingredient> ingredients;
     private List<Tag> tags;
@@ -262,7 +261,8 @@ public class Recipe {
                 JSONObject json = tags.getJSONObject(i);
                 Tag tag = Tag.loadFromJSON(json);
                 this.tags.add(tag);
-            } catch (JSONException ignored) {}
+            } catch (JSONException ignored) {
+            }
         }
     }
 
@@ -322,7 +322,7 @@ public class Recipe {
         @SuppressLint("DefaultLocale") String endpoint = String.format("community/recipes?limit=%d&page=%d", limit, page);
         HTTPManager.getInstance().request(endpoint, parameters, Request.Method.GET, response -> {
             if (response instanceof JSONArray) {
-                fetchRecipesJSONArray((JSONArray)response, success_callback);
+                fetchRecipesJSONArray((JSONArray) response, success_callback);
             }
         }, error -> {
             System.out.println("Failed!");
