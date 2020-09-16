@@ -3,6 +3,7 @@ package com.kitchas.kitchenassistant.activities.fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,12 +19,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
+import com.kitchas.kitchenassistant.activities.MainActivity;
+import com.kitchas.kitchenassistant.activities.PersonalAssistantActivity;
 import com.kitchas.kitchenassistant.activities.adapters.FullRecipeDetailAdapter;
 import com.kitchas.kitchenassistant.assistant.models.CustomPair;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
+import com.kitchas.kitchenassistant.utils.callbacks.GeneralCallback;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +38,7 @@ public class RecipeViewFragment extends Fragment {
     private FragmentActivity listener;
     private String recipe_id;
     private Recipe recipe;
+    public static final int RECIPE_VIEW_INTENT_CODE = 15;
 
     public RecipeViewFragment(String recipe_id) {
         this.recipe_id = recipe_id;
@@ -107,6 +114,7 @@ public class RecipeViewFragment extends Fragment {
                     .centerCrop()
                     .into(image);
         }
+        FloatingActionButton btn_assistant = this.listener.findViewById(R.id.view_recipe_fab);
         RatingBar rating_bar = (RatingBar) this.listener.findViewById(R.id.view_recipe_rating_bar);
         rating_bar.setRating((float)recipe.getRate());
         rating_bar.setVisibility(View.VISIBLE);
@@ -116,13 +124,20 @@ public class RecipeViewFragment extends Fragment {
         description.setText(recipe.getDescription());
         ListView full_details = this.listener.findViewById(R.id.view_recipe_list_view);
         List<CustomPair<String, String>> details = new LinkedList<>();
-        details.add(new CustomPair<String, String>(this.listener.getString(R.string.STEP), recipe.printSteps()));
         details.add(new CustomPair<String, String>(this.listener.getString(R.string.INGREDIENTS), recipe.printIngredients()));
+        details.add(new CustomPair<String, String>(this.listener.getString(R.string.STEP), recipe.printSteps()));
         BaseAdapter adapter = new FullRecipeDetailAdapter(this.listener, R.layout.adapter_view_recipe_full, details);
         full_details.setAdapter(adapter);
         TextView total_time = (TextView) this.listener.findViewById(R.id.view_recipe_total_time_text);
         total_time.setText(recipe.getTotalTimeCook());
         this.listener.findViewById(R.id.view_recipe_clock_time_icon).setVisibility(View.VISIBLE);
+
+        btn_assistant.setOnClickListener(view -> {
+            Intent intent = new Intent(this.listener, PersonalAssistantActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            intent.putExtra("recipe", recipe);
+            startActivityForResult(intent, RECIPE_VIEW_INTENT_CODE);
+        });
     }
 
     // This method is called when the fragment is no longer connected to the Activity

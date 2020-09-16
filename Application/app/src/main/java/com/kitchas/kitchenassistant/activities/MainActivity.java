@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,6 +42,7 @@ public class MainActivity extends BaseActivity
     private static FrameLayout frameLayout;
 
     public static void showRecipeView() {
+        fab.hide();
         frameLayout.setVisibility(View.VISIBLE);
         frameLayout.bringToFront();
     }
@@ -54,7 +56,8 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         User user = User.getInstance(this);
         MotionDetector.ActiveMotionDetector(this, result -> {
-            if (result && !listenToSpeech) {
+            boolean res = getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
+            if (res && result && !listenToSpeech) {
                 listenToSpeech = true;
                 speechToTextManager.listen(this, 100);
             }
@@ -194,6 +197,7 @@ public class MainActivity extends BaseActivity
     @Override
     public void onBackPressed() {
         if (frameLayout.getVisibility() == View.VISIBLE) {
+            fab.show();
             frameLayout.setVisibility(View.GONE);
         } else {
             super.onBackPressed();

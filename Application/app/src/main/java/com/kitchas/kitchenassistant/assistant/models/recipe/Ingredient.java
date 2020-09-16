@@ -4,9 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Ingredient {
+public class Ingredient implements Serializable {
     private String title, description;
     private int amount;
     private Units unit;

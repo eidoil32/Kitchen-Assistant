@@ -1,4 +1,4 @@
-package com.kitchas.kitchenassistant;
+package com.kitchas.kitchenassistant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,9 +6,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kitchas.kitchenassistant.activities.BaseActivity;
+import androidx.lifecycle.Lifecycle;
+
+import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Ingredient;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
+import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Instructions;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Step;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.voicedetection.TextToSpeechManager;
@@ -20,65 +23,54 @@ public class PersonalAssistantActivity extends BaseActivity {
     private String currentTextToSay = "";
     private boolean doneWithIngredients = false;
     private boolean doneWithSteps = false;
+    private TextView shower_text_view;
+    private Button next_btn;
     private List<Ingredient> ingredients;
     private List<Step> steps;
-    private TextView textView;
-    private Button nextBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_assistant);
-        textView = findViewById(R.id.textView);
-        nextBtn = findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(btn -> activePersonalAssistantInteraction());
+        shower_text_view = findViewById(R.id.personal_assistant_show);
+        next_btn = findViewById(R.id.personal_assistant_next_btn);
+        next_btn.setOnClickListener(btn -> activePersonalAssistantInteraction());
 
         Intent intent = getIntent();
-        String recipeId = intent.getStringExtra("recipeId");
-        //recipe1 = (Recipe) intent.getSerializableExtra("recipe");
-        //ingredients = recipe.getIngredients();
-        //steps = recipe.getInstructions().steps;
-        //sayHello();
+        this.recipe = (Recipe) intent.getSerializableExtra("recipe");
+        if (this.recipe != null) {
+            this.ingredients = this.recipe.getIngredients();
+            this.steps = this.recipe.getInstructions().getSteps();
 
-        MotionDetector.ActiveMotionDetector(this, result -> {
-            if (result) {
-                activePersonalAssistantInteraction();
-            }
-        }, error -> {
-            Toast.makeText(this, "Problem with motion detector!", Toast.LENGTH_LONG).show();
-        });
+            MotionDetector.ActiveMotionDetector(this, result -> {
+                if (result) {
+                    activePersonalAssistantInteraction();
+                }
+            }, error -> {
+                Toast.makeText(this, "Problem with motion detector!", Toast.LENGTH_LONG).show();
+            });
 
-        Recipe.loadRecipeByID(recipeId, this, _recipe -> {
-            if (_recipe instanceof Recipe) {
-                this.recipe = (Recipe) _recipe;
-                ingredients = recipe.getIngredients();
-                steps = recipe.getInstructions().steps;
-                sayHello();
-            }
-        }, error -> {
-            System.out.println("Error loading recipe");
-            System.out.println(error);
-        });
+            textToSpeechManager = new TextToSpeechManager(this) {
+                @Override
+                public String getText() {
+                    return currentTextToSay;
+                }
+            };
+            sayHello();
+        }
 
-        textToSpeechManager = new TextToSpeechManager(this) {
-            @Override
-            public String getText() {
-                return currentTextToSay;
-            }
-        };
     }
 
     private void sayHello() {
         currentTextToSay = "Hello! let's get start cooking!";
-        textView.setText(currentTextToSay);
+        shower_text_view.setText(currentTextToSay);
         textToSpeechManager.speak(this, ENGINE_REQUEST_TEXT_TO_SPEECH);
     }
 
     private void activePersonalAssistantInteraction() {
-
         if (!doneWithIngredients && ingredients != null && ingredients.size() > 0) {
             currentTextToSay = ingredients.get(0).getDescription() + " " + ingredients.get(0).getTitle();
-            textView.setText(currentTextToSay);
+            shower_text_view.setText(currentTextToSay);
             ingredients.remove(0);
         } else {
             doneWithIngredients = true;
@@ -88,7 +80,7 @@ public class PersonalAssistantActivity extends BaseActivity {
         if (doneWithIngredients) {
             if (!doneWithSteps && steps != null && steps.size() > 0) {
                 currentTextToSay = steps.get(0).getDescription();
-                textView.setText(currentTextToSay);
+                shower_text_view.setText(currentTextToSay);
                 steps.remove(0);
             } else {
                 doneWithSteps = true;

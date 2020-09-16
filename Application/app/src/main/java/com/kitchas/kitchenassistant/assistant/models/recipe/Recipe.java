@@ -38,6 +38,8 @@ public class Recipe implements Serializable {
     private int total_time; //total time in seconds
     private String image;
 
+    private static final long serialVersionUID = 160920L;
+
     public Recipe(String title, RecipeUser creator, long adate, boolean new_recipe) {
         this.title = title;
         this.creator = creator;

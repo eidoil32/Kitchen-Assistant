@@ -4,11 +4,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Instructions {
-    public List<Step> steps;
+public class Instructions implements Serializable {
+    private List<Step> steps;
 
     public Instructions() {
         this.steps = new LinkedList<>();
@@ -21,6 +22,10 @@ public class Instructions {
         }
 
         return json;
+    }
+
+    public List<Step> getSteps() {
+        return this.steps;
     }
 
     public boolean isEmpty() {

@@ -6,10 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Tag {
+public class Tag implements Serializable {
     private String title;
     private String id;
 

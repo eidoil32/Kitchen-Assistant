@@ -18,11 +18,13 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.MainActivity;
 import com.kitchas.kitchenassistant.activities.adapters.MinRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 
+import java.util.Collections;
 import java.util.List;
 
 public class HomeFragment extends Fragment

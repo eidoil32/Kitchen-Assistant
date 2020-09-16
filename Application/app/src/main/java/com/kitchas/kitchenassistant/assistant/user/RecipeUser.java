@@ -2,7 +2,9 @@ package com.kitchas.kitchenassistant.assistant.user;
 
 import android.content.Context;
 
-public class RecipeUser {
+import java.io.Serializable;
+
+public class RecipeUser implements Serializable {
     private String id;
 
     public RecipeUser() {

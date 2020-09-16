@@ -7,7 +7,9 @@ import com.kitchas.kitchenassistant.utils.JSONHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Step {
+import java.io.Serializable;
+
+public class Step implements Serializable {
     private String description;
     private String special_notes;
     private int time;
