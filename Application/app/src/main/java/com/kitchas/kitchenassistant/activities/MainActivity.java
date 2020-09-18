@@ -40,6 +40,7 @@ public class MainActivity extends BaseActivity
     private boolean listenToSpeech = false;
     private ViewPager viewPager;
     private static FrameLayout frameLayout;
+    private ImageView micBtn;
 
     public static void showRecipeView() {
         fab.hide();
@@ -73,6 +74,14 @@ public class MainActivity extends BaseActivity
             user.refreshData(this);
             this.start();
         }
+
+        micBtn = findViewById(R.id.micBtn);
+        micBtn.setOnClickListener(view -> {
+            if (!listenToSpeech) {
+                listenToSpeech = true;
+                speechToTextManager.listen(this, 100);
+            }
+        });
 
     }
 

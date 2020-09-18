@@ -90,4 +90,7 @@
     <string name="PROFILE_UPDATE_FAILED">Update profile failed</string>
     <string name="UPDATE_PROFILE_PIC">Do you want to update your profile picture?</string>
     <string name="PROFILE_UPDATE_SUCCESS">Profile updated successfully</string>
+    <string name="HELLO_MASSAGE" translatable="false">Hello</string>
+    <string name="nextBtn" translatable="false">NEXT</string>
+    <string name="textFont" translatable="false">cursive</string>
 </resources>
