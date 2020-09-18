@@ -55,6 +55,11 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            finish();
+        }
+
         User user = User.getInstance(this);
         MotionDetector.ActiveMotionDetector(this, result -> {
             boolean res = getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);

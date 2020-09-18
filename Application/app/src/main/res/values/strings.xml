@@ -93,4 +93,8 @@
     <string name="HELLO_MASSAGE" translatable="false">Hello</string>
     <string name="nextBtn" translatable="false">NEXT</string>
     <string name="textFont" translatable="false">cursive</string>
+    <string name="PROFILE_WELCOME">Hi!</string>
+    <string name="BTN_LOGOUT">Logout</string>
+    <string name="LOGOUT_TITLE_DIALOG">Are you sure you want to logout?</string>
+    <string name="LOGOUT_FAILED">Sorry! but logout proccess failed, please try again</string>
 </resources>

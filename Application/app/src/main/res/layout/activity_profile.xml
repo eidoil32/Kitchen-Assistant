@@ -80,7 +80,7 @@
         android:layout_marginStart="8dp"
         android:textSize="30sp"
         app:layout_constraintStart_toEndOf="@+id/profile_image"
-        app:layout_constraintTop_toTopOf="@+id/profile_image"
+        app:layout_constraintTop_toBottomOf="@+id/profile_welcome_text"
         tools:text="Ido Hayun" />
 
     <Button
@@ -88,9 +88,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/BTN_SAVE"
-        app:layout_constraintEnd_toEndOf="@+id/profile_age"
-        app:layout_constraintStart_toStartOf="@+id/profile_age"
+        app:layout_constraintEnd_toStartOf="@+id/guideline14"
         app:layout_constraintTop_toBottomOf="@+id/profile_age" />
+
+    <Button
+        android:id="@+id/profile_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/BTN_LOGOUT"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:layout_constraintStart_toStartOf="@+id/guideline14"
+        app:layout_constraintTop_toBottomOf="@+id/profile_age" />
+
+    <TextView
+        android:id="@+id/profile_welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/PROFILE_WELCOME"
+        app:layout_constraintStart_toStartOf="@+id/guideline14"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

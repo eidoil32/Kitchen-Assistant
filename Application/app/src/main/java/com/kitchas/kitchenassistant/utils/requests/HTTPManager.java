@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HTTPManager {
+    public void clearToken() {
+        this.token = null;
+    }
+
     private static class Token {
         public String _token;
         private static Token instance;

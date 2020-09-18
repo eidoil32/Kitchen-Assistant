@@ -281,4 +281,18 @@ public class User extends Base {
             System.out.println(_id);
         }
     }
+
+    public boolean logout(Context context) {
+        HTTPManager.getInstance().clearToken();
+        SQLHelper database = new SQLHelper(context);
+        database.onCreate(database.getWritableDatabase()); // delete all local data
+        this.avatar = null;
+        this.email = null;
+        this.age = 0;
+        this.logged_in = false;
+        this.id = null;
+        this.name = null;
+
+        return true;
+    }
 }

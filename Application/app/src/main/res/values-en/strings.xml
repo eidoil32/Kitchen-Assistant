@@ -85,4 +85,8 @@
     <string name="PROFILE_UPDATE_FAILED">Update profile failed</string>
     <string name="UPDATE_PROFILE_PIC">Do you want to update your profile picture?</string>
     <string name="PROFILE_UPDATE_SUCCESS">Profile updated successfully</string>
+    <string name="PROFILE_WELCOME">Hi!</string>
+    <string name="BTN_LOGOUT">Logout</string>
+    <string name="LOGOUT_TITLE_DIALOG">Are you sure you want to logout?</string>
+    <string name="LOGOUT_FAILED">Sorry! but logout proccess failed, please try again</string>
 </resources>

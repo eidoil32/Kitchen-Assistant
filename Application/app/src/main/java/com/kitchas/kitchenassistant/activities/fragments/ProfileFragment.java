@@ -1,17 +1,13 @@
 package com.kitchas.kitchenassistant.activities.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -26,9 +23,9 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.LoginActivity;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
-import com.kitchas.kitchenassistant.utils.requests.IOnRequest;
 
 import org.json.JSONException;
 
@@ -82,6 +79,7 @@ public class ProfileFragment extends Fragment{
         TextInputLayout email = this.listener.findViewById(R.id.profile_email);
         TextInputLayout age = this.listener.findViewById(R.id.profile_age);
         Button save = this.listener.findViewById(R.id.profile_save);
+        Button logout = this.listener.findViewById(R.id.profile_logout);
 
         String user_age = String.valueOf(user.getAge());
 
@@ -118,6 +116,26 @@ public class ProfileFragment extends Fragment{
                     Toast.makeText(this.listener, R.string.PROFILE_UPDATE_FAILED, Toast.LENGTH_SHORT).show();
                 }, this.listener);
             }
+        });
+
+        logout.setOnClickListener(view1 -> {
+            AlertDialog dialog = new MaterialAlertDialogBuilder(this.listener)
+                    .setTitle(R.string.LOGOUT_TITLE_DIALOG)
+                    .setPositiveButton(R.string.OK_BTN_TEXT, (dialogInterface, i) -> {
+                        HTTPManager.getInstance().POSTRequest("users/logout", new HashMap<>(),
+                                response -> {
+                                    if (User.getInstance(this.listener).logout(this.listener)) {
+                                        Intent intent = new Intent(this.listener, LoginActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        intent.putExtra("EXIT", true);
+                                        startActivity(intent);
+                                    }
+                                }, error -> {
+                                    Toast.makeText(this.listener, R.string.LOGOUT_FAILED, Toast.LENGTH_SHORT).show();
+                                }, this.listener);
+                    })
+                    .setNegativeButton(R.string.CANCEL_BTN, (dialogInterface, i) -> dialogInterface.cancel())
+                    .show();
         });
     }
 
