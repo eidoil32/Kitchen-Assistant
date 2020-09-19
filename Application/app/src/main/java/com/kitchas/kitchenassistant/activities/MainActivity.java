@@ -181,6 +181,7 @@ public class MainActivity extends BaseActivity
         Tools.hideKeyboard(this);
         Search search = new Search(this);
         search.saveSearch(text.toString(), search_bar.getLastSuggestions());
+        search_bar.closeSearch();
         Intent intent = new Intent(MainActivity.this, SearchResults.class);
         intent.putExtra("query", text.toString());
         intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);

@@ -1,52 +1,66 @@
 package com.kitchas.kitchenassistant.activities.adapters;
 
 import android.content.Context;
-import android.content.Intent;
+;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;;
-import android.util.Base64;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
 import com.kitchas.kitchenassistant.activities.MainActivity;
 import com.kitchas.kitchenassistant.activities.fragments.FavoritesFragment;
 import com.kitchas.kitchenassistant.activities.fragments.RecipeViewFragment;
+import com.kitchas.kitchenassistant.activities.helpers.BitmapUtils;
 import com.kitchas.kitchenassistant.activities.helpers.DoubleClickListener;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
-import com.kitchas.kitchenassistant.utils.Settings;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 public class MinRecipeAdapter extends BaseAdapter<Recipe> {
     public static int num = 0;
+    private boolean active_double_click, delete_btn;
+    private View.OnClickListener delete_action;
 
     public MinRecipeAdapter(@NonNull Context context, int resource, List<Recipe> recipes) {
         super(context, resource, recipes);
+        this.active_double_click = true;
+        this.delete_btn = false;
+    }
+
+    public MinRecipeAdapter(@NonNull Context context, int resource, List<Recipe> recipes, boolean active_double_click, boolean delete_btn) {
+        super(context, resource, recipes);
+        this.active_double_click = active_double_click;
+        this.delete_btn = delete_btn;
     }
 
     public MinRecipeAdapter(@NonNull Context context, int resource, Set<Recipe> recipes) {
         super(context, resource, new LinkedList<>(recipes));
+        this.active_double_click = true;
+        this.delete_btn = false;
+    }
+
+    public void setOnDeleteAction(View.OnClickListener listener) {
+        this.delete_action = listener;
     }
 
     @Override
@@ -65,27 +79,34 @@ public class MinRecipeAdapter extends BaseAdapter<Recipe> {
 
         view_holder.favorite_image.bringToFront();
         if (recipe != null) {
-            view_holder.getView().setOnClickListener(new DoubleClickListener() {
-                @Override
-                public void onSingleClick(View v) {
-                    // do nothing
-                }
+            if (delete_btn) {
+                //view_holder.delete_btn.setVisibility(View.VISIBLE);
+                view_holder.delete_btn.setOnClickListener(delete_action);
+            }
 
-                @Override
-                public void onDoubleClick(View v) {
-                    User.getInstance(context).favoriteRecipe(context, recipe.getId());
-                    FavoritesFragment.addNewLikedRecipe(recipe);
-                    view_holder.favorite_image.setVisibility(View.VISIBLE);
-                    view_holder.favorite_image.animate().
-                            scaleX(1.4f).alpha(0.5f).
-                            scaleY(1.4f).withEndAction(() -> {
-                                view_holder.favorite_image.setVisibility(View.GONE);
-                                view_holder.favorite_image.setAlpha(1f);
-                                view_holder.favorite_image.setScaleX(1f);
-                                view_holder.favorite_image.setScaleY(1f);
-                            }).setDuration(500).start();
-                }
-            });
+            if (active_double_click) {
+                view_holder.getView().setOnClickListener(new DoubleClickListener() {
+                    @Override
+                    public void onSingleClick(View v) {
+                        // do nothing
+                    }
+
+                    @Override
+                    public void onDoubleClick(View v) {
+                        User.getInstance(context).favoriteRecipe(context, recipe.getId());
+                        FavoritesFragment.addNewLikedRecipe(recipe);
+                        view_holder.favorite_image.setVisibility(View.VISIBLE);
+                        view_holder.favorite_image.animate().
+                                scaleX(1.4f).alpha(0.5f).
+                                scaleY(1.4f).withEndAction(() -> {
+                            view_holder.favorite_image.setVisibility(View.GONE);
+                            view_holder.favorite_image.setAlpha(1f);
+                            view_holder.favorite_image.setScaleX(1f);
+                            view_holder.favorite_image.setScaleY(1f);
+                        }).setDuration(500).start();
+                    }
+                });
+            }
 
             view_holder.title.setText(recipe.getTitle());
             view_holder.description.setText(recipe.getDescription());
@@ -126,7 +147,7 @@ public class MinRecipeAdapter extends BaseAdapter<Recipe> {
         final Button show_more;
         final View view;
         final RatingBar rating_bar;
-        final ImageView recipe_image, favorite_image;
+        final ImageView recipe_image, favorite_image, delete_btn;
 
         ViewHolder(View view) {
             super(view);
@@ -139,6 +160,7 @@ public class MinRecipeAdapter extends BaseAdapter<Recipe> {
             this.rating_bar = view.findViewById(R.id.adapter_last_recipe_rating_bar);
             this.rating_value = view.findViewById(R.id.adapter_last_recipe_rating_text);
             this.favorite_image = view.findViewById(R.id.adapter_last_recipe_favorite);
+            this.delete_btn = view.findViewById(R.id.adapter_last_recipe_delete_btn);
         }
 
         public View getView() {

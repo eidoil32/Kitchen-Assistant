@@ -90,15 +90,23 @@ public class HomeFragment extends Fragment
                     this.title.setText(R.string.NO_LAST_RECIPES);
                 } else {
                     recipeList.addAll(response_recipes);
-                    this.recipes_list_view.setVisibility(View.VISIBLE);
-                    this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-                    this.recipes_list_view.setAdapter(adapter);
+                    setRecipes();
                 }
                 progress.dismiss();
             }, response -> {
                 progress.dismiss();
             }, 1, 10, this.last_viewed_recipes);
+        } else {
+            setRecipes();
+            progress.dismiss();
         }
+    }
+
+    private void setRecipes() {
+        this.recipes_list_view.setVisibility(View.VISIBLE);
+        this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+        this.recipes_list_view.setAdapter(adapter);
+
     }
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,

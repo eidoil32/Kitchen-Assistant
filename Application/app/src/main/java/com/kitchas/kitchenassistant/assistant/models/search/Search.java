@@ -1,8 +1,6 @@
 package com.kitchas.kitchenassistant.assistant.models.search;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.android.volley.Request;
 import com.google.gson.Gson;
@@ -14,15 +12,12 @@ import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Search extends Base {
     public static int MAX_SEARCH_HISTORY = 10;
@@ -38,7 +33,8 @@ public class Search extends Base {
 
         SQLHelper database = new SQLHelper(context);
         String json = database.getData(DB_IDENTIFY);
-        Type listType = new TypeToken<List<String>>() {}.getType();
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
         if (json != null) {
             lastResults = new Gson().fromJson(json, listType);
         }
@@ -46,25 +42,17 @@ public class Search extends Base {
         return lastResults;
     }
 
-    public void loadMore(String query, boolean include_favorites, int page, ISearchCallback success_callback) {
-        HTTPManager.getInstance().request(
-                "community/search/recipe?search=" + query + "page=" + page,
-                new HashMap<>(),
-                Request.Method.GET,
-                response -> {
-                    System.out.println(response);
-                    success_callback.success((JSONArray)response);
-                },
-                error -> {},
-                this.context);
+    public void searchRecipes(String query, boolean include_favorites, ISearchCallback success_callback, IErrorCallback error_callback) {
+        this.searchRecipes(query, include_favorites, success_callback, error_callback, 1);
     }
 
-    public void searchInUserRecipe(String query, boolean include_favorites, ISearchCallback success_callback, IErrorCallback error_callback) {
-        HTTPManager.getInstance().request("community/search/recipe?search=" + query,
-                new HashMap<>(), Request.Method.GET, response -> success_callback.success((JSONArray)response), error -> {
+    public void searchRecipes(String query, boolean include_favorites, ISearchCallback success_callback, IErrorCallback error_callback, int page) {
+        HTTPManager.getInstance().request("community/search/recipe?search=" + query + "&page=" + page,
+                new HashMap<>(), Request.Method.GET, response -> success_callback.success((JSONArray) response), error -> {
                     try {
                         error_callback.error(new Exception(error.getString("error")));
-                    } catch (JSONException ignored) { }
+                    } catch (JSONException ignored) {
+                    }
                 }, context);
     }
 

@@ -3,13 +3,10 @@ package com.kitchas.kitchenassistant.activities.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.BaseActivity;
@@ -42,22 +39,18 @@ public class SearchResults extends BaseActivity
                 this.recipes.addAll((List<Recipe>) recipes);
             }
 
-            if (adapter == null) {
-                this.adapter = new MinRecipeAdapter(this, R.layout.adapter_last_recipe, this.recipes);
-            } else {
-                this.adapter.notifyDataSetChanged();
-            }
-
+            this.adapter = new MinRecipeAdapter(this, R.layout.adapter_last_recipe, this.recipes);
             this.recipes_list_view.setAdapter(adapter);
+            this.recipes_list_view.setSelection(((this.page - 1) * 10) - 1);
         });
     }
 
     private void loadMoreRecipes() {
         Search search = new Search(this);
-        search.loadMore(this.search_query, true, ++page, (results) -> {
+        search.searchRecipes(this.search_query, true, (results) -> {
             this.recipes_results = results;
             this.loadRecipes();
-        });
+        }, error -> {}, ++page);
     }
 
     @Override
@@ -73,7 +66,7 @@ public class SearchResults extends BaseActivity
         this.swipe_refresh_layout.setOnRefreshListener(this);
         ProgressDialog progress = Tools.showLoading(this, "We searching in lightning speed! please wait..");
         Search search = new Search(this);
-        search.searchInUserRecipe(this.search_query, true, (results) -> {
+        search.searchRecipes(this.search_query, true, (results) -> {
             progress.dismiss();
             this.recipes_results = results;
             loadRecipes();
