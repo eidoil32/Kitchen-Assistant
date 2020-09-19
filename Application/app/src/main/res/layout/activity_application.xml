@@ -128,6 +128,7 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
@@ -135,29 +136,25 @@
                 android:id="@+id/main_tab_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/home"
-                android:text="@string/MAIN_HOME_TAB_LABEL" />
+                android:icon="@drawable/home" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/main_tab_community"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/community"
-                android:text="@string/MAIN_COMMUNITY_TAB_LABEL" />
+                android:icon="@drawable/community" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/main_tab_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/favorite"
-                android:text="@string/MAIN_FAVORITE_TAB_LABEL" />
+                android:icon="@drawable/favorite" />
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/main_tab_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/profile"
-                android:text="@string/MAIN_PROFILE_TAB_LABEL" />
+                android:icon="@drawable/profile" />
 
         </com.google.android.material.tabs.TabLayout>
 

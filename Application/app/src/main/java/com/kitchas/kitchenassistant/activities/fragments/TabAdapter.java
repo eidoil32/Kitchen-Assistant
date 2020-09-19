@@ -12,6 +12,11 @@ public class TabAdapter extends FragmentPagerAdapter {
     private Context context;
     private int total_tabs;
 
+    public static int HOME_TAB_NO = 0,
+            COMMUNITY_TAB_NO = 1,
+            FAVORITES_TAB_NO = 2,
+            PROFILE_TAB_NO = 3;
+
     public TabAdapter(Context context, FragmentManager manager, int totalTabs) {
         super(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.context = context;

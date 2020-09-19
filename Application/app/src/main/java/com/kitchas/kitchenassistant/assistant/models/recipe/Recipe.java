@@ -295,7 +295,11 @@ public class Recipe implements Serializable {
         Recipe recipe = new Recipe(json.getString("title"), creator, json.getInt("adate"), false);
         recipe.setId(json.getString("_id"));
         recipe.setRate(Float.parseFloat(json.getString("rate")));
-        recipe.setTotal_time(json.getInt("totalTime"));
+        try {
+            recipe.setTotal_time(json.getInt("totalTime"));
+        } catch (JSONException ignored) {
+            recipe.setTotal_time(0);
+        }
         recipe.setDescription(json.getString("description"));
         try {
             String image = json.getString("image");

@@ -43,7 +43,6 @@ public class HomeFragment extends Fragment
     protected TextView title;
     private List<String> last_viewed_recipes;
     private static Set<Recipe> recipeList;
-    private final Lock lock = new ReentrantLock();
 
     public static void addNew(Recipe recipe) {
         if (recipeList != null) {
@@ -74,56 +73,32 @@ public class HomeFragment extends Fragment
         ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_MY_RECIPES));
         Recipe.fetchUserRecipes(this.listener, recipes -> {
             List<Recipe> response_recipes = (List<Recipe>) recipes;
-            boolean my_lock = this.lock.tryLock();
-            while (!my_lock) {
-                my_lock = this.lock.tryLock();
+            if (recipeList == null) {
+                recipeList = new HashSet<>();
             }
-            // got the lock, will be unlock
-            this.addToRecipeListSync(response_recipes);
-            this.recipes_list_view.setVisibility(View.VISIBLE);
-            if (this.adapter == null)
-                this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-            else
-                this.adapter.notifyDataSetChanged();
-            this.recipes_list_view.setAdapter(adapter);
-            this.lock.unlock();
-            progress.dismiss();
+            recipeList.addAll(response_recipes);
+            loadLastViewedRecipes(progress);
         });
     }
 
-    protected void loadLastViewedRecipes() {
-        this.loadMyRecipes();
+    protected void loadLastViewedRecipes(ProgressDialog progress) {
         if (!this.last_viewed_recipes.isEmpty()) {
-            ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
             Recipe.fetchListRecipes(this.listener, recipes -> {
                 List<Recipe> response_recipes = (List<Recipe>) recipes;
                 if (response_recipes.isEmpty() && recipeList.isEmpty()) {
                     this.recipes_list_view.setVisibility(View.INVISIBLE);
                     this.title.setText(R.string.NO_LAST_RECIPES);
                 } else {
-                    boolean my_lock = this.lock.tryLock();
-                    while (!my_lock) {
-                        my_lock = this.lock.tryLock();
-                    }
-                    this.addToRecipeListSync(response_recipes);
-                    if (this.adapter == null)
-                        this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-                    else
-                        this.adapter.notifyDataSetChanged();
-                    this.lock.unlock();
+                    recipeList.addAll(response_recipes);
+                    this.recipes_list_view.setVisibility(View.VISIBLE);
+                    this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+                    this.recipes_list_view.setAdapter(adapter);
                 }
                 progress.dismiss();
             }, response -> {
+                progress.dismiss();
             }, 1, 10, this.last_viewed_recipes);
         }
-    }
-
-    private void addToRecipeListSync(List<Recipe> recipes) {
-        if (recipeList == null) {
-            recipeList = new HashSet<>();
-        }
-
-        recipeList.addAll(recipes);
     }
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,
@@ -143,9 +118,9 @@ public class HomeFragment extends Fragment
         User user = User.getInstance(view.getContext());
         this.last_viewed_recipes = user.getLastViewedRecipes(view.getContext());
         this.title = this.listener.findViewById(R.id.recipe_list_title);
-        this.title.setText(getString(R.string.LAST_VIEW_RECIPES));
+        this.title.setText(getString(R.string.HOME_RECIPES));
         this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);
-        loadLastViewedRecipes();
+        this.loadMyRecipes();
         this.recipes_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -176,7 +151,7 @@ public class HomeFragment extends Fragment
     @Override
     public void onRefresh() {
         this.swipe_refresh_layout.setRefreshing(true);
-        this.loadLastViewedRecipes();
+        this.loadMyRecipes();
         this.swipe_refresh_layout.setRefreshing(false);
     }
 }

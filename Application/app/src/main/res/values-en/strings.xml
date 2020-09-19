@@ -91,4 +91,7 @@
     <string name="LOGOUT_FAILED">Sorry! but logout proccess failed, please try again</string>
     <string name="LOADING_COMMUNITY_RECIPES">Loading community recipes</string>
     <string name="LOADING_FAVORITE_RECIPES">Loading favorite recipes</string>
+    <string name="HOME_RECIPES" />
+    <string name="SEARCH_RESULTS_TITLE">Search results</string>
+    <string name="FAVORITES_NO_RECIPES">it appears that you haven\'t like any recipe, you can double click on any recipe to added to your favorite.</string>
 </resources>

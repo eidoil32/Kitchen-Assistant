@@ -46,13 +46,22 @@ public class Search extends Base {
         return lastResults;
     }
 
+    public void loadMore(String query, boolean include_favorites, int page, ISearchCallback success_callback) {
+        HTTPManager.getInstance().request(
+                "community/search/recipe?search=" + query + "page=" + page,
+                new HashMap<>(),
+                Request.Method.GET,
+                response -> {
+                    System.out.println(response);
+                    success_callback.success((JSONArray)response);
+                },
+                error -> {},
+                this.context);
+    }
+
     public void searchInUserRecipe(String query, boolean include_favorites, ISearchCallback success_callback, IErrorCallback error_callback) {
-        System.out.println(query);
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("search", query);
-        parameters.put("limit", "10");
         HTTPManager.getInstance().request("community/search/recipe?search=" + query,
-                parameters, Request.Method.GET, response -> success_callback.success((JSONArray)response), error -> {
+                new HashMap<>(), Request.Method.GET, response -> success_callback.success((JSONArray)response), error -> {
                     try {
                         error_callback.error(new Exception(error.getString("error")));
                     } catch (JSONException ignored) { }

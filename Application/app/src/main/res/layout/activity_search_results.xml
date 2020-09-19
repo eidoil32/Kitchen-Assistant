@@ -7,31 +7,18 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/favorite_title"
+        android:id="@+id/search_results_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:text="@string/SEARCH_RESULTS_TITLE"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/favorite_no_recipes"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="64dp"
-        android:gravity="center_horizontal|center_vertical"
-        android:text="@string/FAVORITES_NO_RECIPES"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/favorite_swipe_container" />
-
     <com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout
-        android:id="@+id/favorite_swipe_container"
+        android:id="@+id/search_results_swipe"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="0dp"
@@ -39,11 +26,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/favorite_title"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/search_results_title"
+        app:layout_constraintVertical_bias="0.0"
+        app:srl_direction="both">
 
         <ListView
-            android:id="@+id/favorite_list_view"
+            android:id="@+id/search_results_list_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:divider="@null"
@@ -51,5 +39,4 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
     </com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

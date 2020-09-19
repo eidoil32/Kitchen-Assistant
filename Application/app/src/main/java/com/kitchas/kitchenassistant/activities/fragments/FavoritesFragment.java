@@ -110,9 +110,13 @@ public class FavoritesFragment extends Fragment
         ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_FAVORITE_RECIPES));
         Recipe.fetchFavoriteRecipes(this.listener, recipes -> {
             recipe_list = (List<Recipe>)recipes;
-            this.recipes_list_view.setVisibility(View.VISIBLE);
-            this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list);
-            this.recipes_list_view.setAdapter(adapter);
+            if (!recipe_list.isEmpty()) {
+                this.recipes_list_view.setVisibility(View.VISIBLE);
+                this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list);
+                this.recipes_list_view.setAdapter(adapter);
+            } else {
+                this.listener.findViewById(R.id.favorite_no_recipes).setVisibility(View.VISIBLE);
+            }
             progress.dismiss();
         }, response -> {}, 1, 10);
     }

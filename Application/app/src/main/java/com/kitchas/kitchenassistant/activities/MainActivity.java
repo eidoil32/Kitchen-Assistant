@@ -1,6 +1,5 @@
 package com.kitchas.kitchenassistant.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
@@ -12,14 +11,13 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.fragments.SearchResultsFragment;
+import com.kitchas.kitchenassistant.activities.fragments.SearchResults;
 import com.kitchas.kitchenassistant.activities.fragments.TabAdapter;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
@@ -27,7 +25,6 @@ import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends BaseActivity
@@ -87,7 +84,6 @@ public class MainActivity extends BaseActivity
                 speechToTextManager.listen(this, 100);
             }
         });
-
     }
 
     private void start() {
@@ -106,6 +102,11 @@ public class MainActivity extends BaseActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+                if (tab.getPosition() != TabAdapter.PROFILE_TAB_NO) {
+                    fab.show();
+                } else {
+                    fab.hide();
+                }
             }
 
             @Override
@@ -163,7 +164,6 @@ public class MainActivity extends BaseActivity
         TransitionManager.beginDelayedTransition(findViewById(R.id.main_activity_main_constraint));
         search_icon_view.setVisibility(View.GONE);
         search_bar.setVisibility(View.VISIBLE);
-        System.out.println(Arrays.toString(search_bar.getLastSuggestions().toArray()));
         search_bar.openSearch();
     }
 
@@ -181,17 +181,10 @@ public class MainActivity extends BaseActivity
         Tools.hideKeyboard(this);
         Search search = new Search(this);
         search.saveSearch(text.toString(), search_bar.getLastSuggestions());
-        ProgressDialog progress = Tools.showLoading(this, "We searching in lightning speed! please wait..");
-        search.searchInUserRecipe(text.toString(), true, (results) -> {
-            this.findViewById(R.id.main_toolbar_layout).setVisibility(View.GONE);
-            progress.dismiss();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.main_activity_framelayout, new SearchResultsFragment(results));
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        }, (error) -> {
-            System.out.println("ERROR SEARCHING!");
-        });
+        Intent intent = new Intent(MainActivity.this, SearchResults.class);
+        intent.putExtra("query", text.toString());
+        intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        startActivity(intent);
     }
 
     @Override
