@@ -20,7 +20,7 @@ public class SearchResultsFragment extends HomeFragment {
     }
 
     @Override
-    protected void loadRecipes() {
+    protected void loadLastViewedRecipes() {
         Recipe.fetchRecipesJSONArray(this.searchResults, recipes -> {
             List<Recipe> recipeList = (List<Recipe>) recipes;
             this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);

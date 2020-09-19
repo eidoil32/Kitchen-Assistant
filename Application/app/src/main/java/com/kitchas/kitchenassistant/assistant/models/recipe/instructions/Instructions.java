@@ -42,8 +42,12 @@ public class Instructions implements Serializable {
     public String printSteps() {
         StringBuilder steps = new StringBuilder();
         int i = 1;
-        for (Step step: this.steps) {
-            steps.append(String.format("%d. %s\n", i++, step.getDescription()));
+        for (Step step : this.steps) {
+            if (step.getSpecial_notes() != null) {
+                steps.append(String.format("%d. %s (%s)\n", i++, step.getDescription(), step.getSpecial_notes()));
+            } else {
+                steps.append(String.format("%d. %s\n", i++, step.getDescription()));
+            }
         }
 
         return steps.toString();

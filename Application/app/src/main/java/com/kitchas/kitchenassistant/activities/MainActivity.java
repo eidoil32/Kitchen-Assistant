@@ -56,7 +56,7 @@ public class MainActivity extends BaseActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getIntent().getBooleanExtra("EXIT", false)) {
+        if (getIntent().getBooleanExtra("USER_LOGGED_OUT", false)) {
             finish();
         }
 
@@ -80,7 +80,7 @@ public class MainActivity extends BaseActivity
             this.start();
         }
 
-        micBtn = findViewById(R.id.micBtn);
+        micBtn = findViewById(R.id.main_mic_icon);
         micBtn.setOnClickListener(view -> {
             if (!listenToSpeech) {
                 listenToSpeech = true;

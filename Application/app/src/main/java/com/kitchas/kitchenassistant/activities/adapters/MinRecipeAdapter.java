@@ -34,13 +34,19 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class MinRecipeAdapter extends BaseAdapter<Recipe> {
     public static int num = 0;
 
     public MinRecipeAdapter(@NonNull Context context, int resource, List<Recipe> recipes) {
         super(context, resource, recipes);
+    }
+
+    public MinRecipeAdapter(@NonNull Context context, int resource, Set<Recipe> recipes) {
+        super(context, resource, new LinkedList<>(recipes));
     }
 
     @Override

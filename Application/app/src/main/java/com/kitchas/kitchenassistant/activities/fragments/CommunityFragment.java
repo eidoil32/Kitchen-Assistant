@@ -57,7 +57,7 @@ public class CommunityFragment extends Fragment
     }
 
     protected void loadRecipes() {
-        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_COMMUNITY_RECIPES));
         this.page = 1;
         Recipe.fetchCommunityRecipes(this.listener, recipes -> {
             recipe_list = (List<Recipe>)recipes;

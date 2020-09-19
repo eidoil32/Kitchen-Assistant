@@ -54,7 +54,7 @@ public class Step implements Serializable {
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Step) {
             Step object = (Step)obj;
-            return !this.description.equals(object.getDescription());
+            return this.description.equals(object.getDescription());
         }
 
         return false;

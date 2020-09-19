@@ -104,4 +104,15 @@ public class Ingredient implements Serializable {
     public void setPriority(int priority) {
         this.priority = priority;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append(amount).append(" ").append(unit).append(" ").append(title);
+        if (description != null) {
+            result.append(" (").append(description).append(")");
+        }
+
+        return result.toString();
+    }
 }

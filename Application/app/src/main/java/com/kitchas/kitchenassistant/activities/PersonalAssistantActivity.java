@@ -69,7 +69,7 @@ public class PersonalAssistantActivity extends BaseActivity {
 
     private void activePersonalAssistantInteraction() {
         if (!doneWithIngredients && ingredients != null && ingredients.size() > 0) {
-            currentTextToSay = ingredients.get(0).getDescription() + " " + ingredients.get(0).getTitle();
+            currentTextToSay = ingredients.get(0).toString();
             shower_text_view.setText(currentTextToSay);
             ingredients.remove(0);
         } else {

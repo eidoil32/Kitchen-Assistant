@@ -285,7 +285,7 @@ public class User extends Base {
     public boolean logout(Context context) {
         HTTPManager.getInstance().clearToken();
         SQLHelper database = new SQLHelper(context);
-        database.onCreate(database.getWritableDatabase()); // delete all local data
+        database.onUpgrade(database.getWritableDatabase(), 0, 0); // delete all local data
         this.avatar = null;
         this.email = null;
         this.age = 0;

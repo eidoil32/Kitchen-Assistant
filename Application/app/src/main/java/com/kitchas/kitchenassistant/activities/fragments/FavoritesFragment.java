@@ -107,7 +107,7 @@ public class FavoritesFragment extends Fragment
     }
 
     private void loadRecipes() {
-        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
+        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_FAVORITE_RECIPES));
         Recipe.fetchFavoriteRecipes(this.listener, recipes -> {
             recipe_list = (List<Recipe>)recipes;
             this.recipes_list_view.setVisibility(View.VISIBLE);

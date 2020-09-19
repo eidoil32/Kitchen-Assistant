@@ -129,11 +129,7 @@ public class HTTPManager {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                if (token != null) {
-                    headers.put("Authorization", "Bearer " + token.getToken());
-                }
-                return headers;
+                return setHeaders();
             }
 
             @Override
@@ -182,11 +178,7 @@ public class HTTPManager {
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                if (token != null) {
-                    headers.put("Authorization", "Bearer " + token.getToken());
-                }
-                return headers;
+                return setHeaders();
             }
         };
 
@@ -235,14 +227,20 @@ public class HTTPManager {
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json; charset=UTF-8");
-                headers.put("Authorization", "Bearer " + token.getToken());
-                return headers;
+                return setHeaders();
             }
         };
         request.setRetryPolicy(retry_policy);
         this.queue.add(request);
     }
 
+
+    private Map<String, String> setHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json; charset=UTF-8");
+        if (token != null) {
+            headers.put("Authorization", "Bearer " + token.getToken());
+        }
+        return headers;
+    }
 }

@@ -88,7 +88,7 @@ public class ProfileFragment extends Fragment{
             age.getEditText().setText(String.valueOf(user.getAge()));
         }
         if (user.getAvatar() == null) {
-            image.setImageResource(R.drawable.avatar);
+            image.setImageResource(R.drawable.ic_user_profile_picture);
         } else {
             Glide.with(view)
                     .load(user.getAvatar())
@@ -127,7 +127,7 @@ public class ProfileFragment extends Fragment{
                                     if (User.getInstance(this.listener).logout(this.listener)) {
                                         Intent intent = new Intent(this.listener, LoginActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        intent.putExtra("EXIT", true);
+                                        intent.putExtra("USER_LOGGED_OUT", true);
                                         startActivity(intent);
                                     }
                                 }, error -> {

@@ -11,36 +11,44 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
 import com.kitchas.kitchenassistant.R;
-import com.kitchas.kitchenassistant.activities.MainActivity;
 import com.kitchas.kitchenassistant.activities.adapters.MinRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
 import com.kitchas.kitchenassistant.utils.Tools;
+import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class HomeFragment extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener{
+        implements SwipeRefreshLayout.OnRefreshListener {
     protected FragmentActivity listener;
     protected SwipeRefreshLayout swipe_refresh_layout;
     protected BaseAdapter adapter;
     protected ListView recipes_list_view;
     protected TextView title;
     private List<String> last_viewed_recipes;
-    private static List<Recipe> recipeList;
+    private static Set<Recipe> recipeList;
+    private final Lock lock = new ReentrantLock();
 
     public static void addNew(Recipe recipe) {
-       if (recipeList != null) {
-           recipeList.add(recipe);
-       }
+        if (recipeList != null) {
+            recipeList.add(recipe);
+        }
     }
 
     // This event fires 1st, before creation of fragment or any views
@@ -49,7 +57,7 @@ public class HomeFragment extends Fragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
+        if (context instanceof Activity) {
             this.listener = (FragmentActivity) context;
         }
     }
@@ -62,22 +70,60 @@ public class HomeFragment extends Fragment
         super.onCreate(savedInstanceState);
     }
 
-    protected void loadRecipes() {
+    private void loadMyRecipes() {
+        ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_MY_RECIPES));
+        Recipe.fetchUserRecipes(this.listener, recipes -> {
+            List<Recipe> response_recipes = (List<Recipe>) recipes;
+            boolean my_lock = this.lock.tryLock();
+            while (!my_lock) {
+                my_lock = this.lock.tryLock();
+            }
+            // got the lock, will be unlock
+            this.addToRecipeListSync(response_recipes);
+            this.recipes_list_view.setVisibility(View.VISIBLE);
+            if (this.adapter == null)
+                this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+            else
+                this.adapter.notifyDataSetChanged();
+            this.recipes_list_view.setAdapter(adapter);
+            this.lock.unlock();
+            progress.dismiss();
+        });
+    }
+
+    protected void loadLastViewedRecipes() {
+        this.loadMyRecipes();
         if (!this.last_viewed_recipes.isEmpty()) {
             ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_RECIPES));
             Recipe.fetchListRecipes(this.listener, recipes -> {
-                this.recipeList = (List<Recipe>)recipes;
-                if (recipeList.isEmpty()) {
+                List<Recipe> response_recipes = (List<Recipe>) recipes;
+                if (response_recipes.isEmpty() && recipeList.isEmpty()) {
                     this.recipes_list_view.setVisibility(View.INVISIBLE);
                     this.title.setText(R.string.NO_LAST_RECIPES);
                 } else {
-                    this.recipes_list_view.setVisibility(View.VISIBLE);
-                    this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
-                    this.recipes_list_view.setAdapter(adapter);
+                    boolean my_lock = this.lock.tryLock();
+                    while (!my_lock) {
+                        my_lock = this.lock.tryLock();
+                    }
+                    this.addToRecipeListSync(response_recipes);
+                    if (this.adapter == null)
+                        this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipeList);
+                    else
+                        this.adapter.notifyDataSetChanged();
+                    this.lock.unlock();
                 }
                 progress.dismiss();
-            }, response -> {}, 1, 10, this.last_viewed_recipes);
+            }, response -> {
+            }, 1, 10, this.last_viewed_recipes);
         }
+    }
+
+    private void addToRecipeListSync(List<Recipe> recipes) {
+        if (recipeList == null) {
+            recipeList = new HashSet<>();
+        }
+
+        recipeList.addAll(recipes);
     }
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,
@@ -99,7 +145,7 @@ public class HomeFragment extends Fragment
         this.title = this.listener.findViewById(R.id.recipe_list_title);
         this.title.setText(getString(R.string.LAST_VIEW_RECIPES));
         this.recipes_list_view = this.listener.findViewById(R.id.main_last_recipes_list_view);
-        loadRecipes();
+        loadLastViewedRecipes();
         this.recipes_list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -130,7 +176,7 @@ public class HomeFragment extends Fragment
     @Override
     public void onRefresh() {
         this.swipe_refresh_layout.setRefreshing(true);
-        this.loadRecipes();
+        this.loadLastViewedRecipes();
         this.swipe_refresh_layout.setRefreshing(false);
     }
 }

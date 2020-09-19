@@ -93,19 +93,19 @@
 
 
         <ImageView
-            android:id="@+id/micBtn"
+            android:id="@+id/main_mic_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:clickable="true"
             android:contentDescription="@string/MENU_DRAWER"
             android:focusable="true"
-            android:scaleType="fitCenter"
+            android:scaleType="center"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/toolbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline6"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_mic_none_24" />
+            app:srcCompat="@drawable/mic_icon" />
 
         <ImageView
             android:id="@+id/main_search_icon"

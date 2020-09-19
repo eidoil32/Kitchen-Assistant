@@ -3,8 +3,13 @@ package com.kitchas.kitchenassistant.assistant.models.recipe;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.android.volley.Request;
+import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.adapters.MinRecipeAdapter;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Instructions;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Step;
 import com.kitchas.kitchenassistant.assistant.user.RecipeUser;
@@ -230,7 +235,6 @@ public class Recipe implements Serializable {
         HTTPManager.getInstance().GETRequest("user/recipes/" + recipe_id,
                 response -> {
                     try {
-                        System.out.println(response);
                         Recipe recipe = fetchRecipeFromJSON(response.getJSONObject("recipe"));
                         recipe.fetchInstructions(response.getJSONArray("instructions"));
                         recipe.fetchTags(response.getJSONArray("tags"));
@@ -377,7 +381,7 @@ public class Recipe implements Serializable {
     public String printIngredients() {
         StringBuilder string = new StringBuilder();
         for (Ingredient ingredient : this.ingredients) {
-            string.append(String.format("%s %d %s\n", ingredient.getTitle(), ingredient.getAmount(), ingredient.getUnit()));
+            string.append(ingredient.toString());
         }
         return string.toString();
     }
@@ -397,5 +401,23 @@ public class Recipe implements Serializable {
         } catch (JSONException e) {
             error_callback.onResponse(Settings.CONVERT_TO_JSON_FAILED);
         }
+    }
+
+    public static void fetchUserRecipes(Context context, GeneralCallback success_callback) {
+        HTTPManager.getInstance().request("user/recipes/?favorite=false",
+                new HashMap<>(), Request.Method.GET, response_object -> {
+                    if (response_object instanceof JSONArray) {
+                        fetchRecipesJSONArray((JSONArray) response_object, success_callback);
+                    }
+                }, error -> { }, context);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Recipe) {
+            return this.id.equals(((Recipe) obj).getId());
+        }
+
+        return false;
     }
 }

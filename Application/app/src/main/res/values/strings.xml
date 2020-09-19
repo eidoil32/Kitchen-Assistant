@@ -97,4 +97,7 @@
     <string name="BTN_LOGOUT">Logout</string>
     <string name="LOGOUT_TITLE_DIALOG">Are you sure you want to logout?</string>
     <string name="LOGOUT_FAILED">Sorry! but logout proccess failed, please try again</string>
+    <string name="LOADING_COMMUNITY_RECIPES">Loading community recipes</string>
+    <string name="LOADING_FAVORITE_RECIPES">Loading favorite recipes</string>
+    <string name="LOADING_MY_RECIPES">Loading your recipes</string>
 </resources>
