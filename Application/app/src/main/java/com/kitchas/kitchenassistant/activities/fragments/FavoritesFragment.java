@@ -112,7 +112,7 @@ public class FavoritesFragment extends Fragment
             recipe_list = (List<Recipe>)recipes;
             if (!recipe_list.isEmpty()) {
                 this.recipes_list_view.setVisibility(View.VISIBLE);
-                this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list, false);
+                this.adapter = new MinRecipeAdapter(this.listener, R.layout.adapter_last_recipe, recipe_list, false, true);
                 this.recipes_list_view.setAdapter(adapter);
             } else {
                 this.listener.findViewById(R.id.favorite_no_recipes).setVisibility(View.VISIBLE);
