@@ -6,12 +6,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.lifecycle.Lifecycle;
-
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Ingredient;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
-import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Instructions;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Step;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.voicedetection.TextToSpeechManager;
@@ -19,7 +16,6 @@ import com.kitchas.kitchenassistant.assistant.voicedetection.TextToSpeechManager
 import java.util.List;
 
 public class PersonalAssistantActivity extends BaseActivity {
-    private Recipe recipe;
     private String currentTextToSay = "";
     private boolean doneWithIngredients = false;
     private boolean doneWithSteps = false;
@@ -37,10 +33,11 @@ public class PersonalAssistantActivity extends BaseActivity {
         next_btn.setOnClickListener(btn -> activePersonalAssistantInteraction());
 
         Intent intent = getIntent();
-        this.recipe = (Recipe) intent.getSerializableExtra("recipe");
-        if (this.recipe != null) {
-            this.ingredients = this.recipe.getIngredients();
-            this.steps = this.recipe.getInstructions().getSteps();
+        Recipe recipe;
+        recipe = (Recipe) intent.getSerializableExtra("recipe");
+        if (recipe != null) {
+            this.ingredients = recipe.getIngredients();
+            this.steps = recipe.getInstructions().getSteps();
 
             MotionDetector.ActiveMotionDetector(this, result -> {
                 if (result) {
@@ -88,12 +85,16 @@ public class PersonalAssistantActivity extends BaseActivity {
             }
         }
 
-        if (currentTextToSay != "") {
+        if (!currentTextToSay.equals("")) {
+            currentTextToSay = currentTextToSay.trim().replaceAll("[^A-Za-z0-9 ]", "");
             textToSpeechManager.speak(this, ENGINE_REQUEST_TEXT_TO_SPEECH);
         }
 
         if (doneWithSteps) {
-            //todo!!
+            next_btn.setText("EXIT");
+            next_btn.setOnClickListener(btn -> {
+                finish();
+            });
         }
 
     }
