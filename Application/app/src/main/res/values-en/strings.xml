@@ -62,7 +62,7 @@
     <string name="TAGS">Tags</string>
     <string name="ADD_NEW_INSTRUCTION">Add new instruction</string>
     <string name="dialog_instruction_description_hint">Description *</string>
-    <string name="dialog_instruction_time_hint">Time *</string>
+    <string name="dialog_instruction_time_hint">Time(min) *</string>
     <string name="dialog_instruction_special_notes_hint">Special Notes</string>
     <string name="recipe_description">Description</string>
     <string name="add_recipe">Add recipe</string>
@@ -96,4 +96,5 @@
     <string name="FAVORITES_NO_RECIPES">it appears that you haven\'t like any recipe, you can double click on any recipe to added to your favorite.</string>
     <string name="LOGO">Kitchen Assistant</string>
     <string name="BACK_BTN">Back</string>
+    <string name="EDIT_RECIPE_FAILED">Edit recipe failed</string>
 </resources>

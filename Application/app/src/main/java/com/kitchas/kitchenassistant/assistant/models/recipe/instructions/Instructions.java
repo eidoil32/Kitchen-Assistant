@@ -1,12 +1,19 @@
 package com.kitchas.kitchenassistant.assistant.models.recipe.instructions;
 
+import android.content.Context;
+
+import com.kitchas.kitchenassistant.assistant.models.recipe.Ingredient;
+import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Instructions implements Serializable {
     private List<Step> steps;
@@ -22,6 +29,33 @@ public class Instructions implements Serializable {
         }
 
         return json;
+    }
+
+    public static void updateRecipe(Context context, String recipe_id, List<Step> instructions, List<Step> old_data) {
+        HTTPManager helper = HTTPManager.getInstance();
+        Map<String, String> parameters = new HashMap<>();
+        JSONArray parameters_array = new JSONArray();
+        int i = 0;
+        for (Step step : instructions) {
+            try {
+                if (!old_data.contains(step)) {
+                    parameters_array.put(step.parseJSON(++i));
+                } else {
+                    old_data.remove(step);
+                }
+            } catch (JSONException ignored) { }
+        }
+
+        for (Step step : old_data) {
+            helper.DELETERequest("user/recipe/" + recipe_id + "/instructions/" + step.getId(),
+                    System.out::println, System.out::println, context);
+        }
+
+        if (parameters_array.length() > 0) {
+            parameters.put("instructions", parameters_array.toString());
+            helper.POSTRequest("user/recipe/" + recipe_id + "/instructions",
+                    parameters, System.out::println, System.out::println, context);
+        }
     }
 
     public List<Step> getSteps() {

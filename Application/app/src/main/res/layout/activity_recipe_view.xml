@@ -64,6 +64,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
+        <ImageView
+            android:id="@+id/view_recipe_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/EDIT"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:srcCompat="@drawable/ic_baseline_edit_24" />
+
         <TextView
             android:id="@+id/view_recipe_title"
             android:layout_width="0dp"

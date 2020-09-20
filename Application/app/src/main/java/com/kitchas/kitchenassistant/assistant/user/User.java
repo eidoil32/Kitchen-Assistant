@@ -51,6 +51,10 @@ public class User extends Base {
         return false;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
     public void getFullData(Context context, IOnRequest on_load_callback) {
         HTTPManager.getInstance().GETRequest("user/profile", response -> {
             try {

@@ -2,6 +2,7 @@ package com.kitchas.kitchenassistant.utils.requests;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -14,12 +15,22 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Settings;
+import com.mantraideas.simplehttp.datamanager.DataRequestManager;
+import com.mantraideas.simplehttp.datamanager.OnDataRecievedListener;
+import com.mantraideas.simplehttp.datamanager.OnDataRecievedProgressListener;
+import com.mantraideas.simplehttp.datamanager.dmmodel.DataRequest;
+import com.mantraideas.simplehttp.datamanager.dmmodel.DataRequestPair;
+import com.mantraideas.simplehttp.datamanager.dmmodel.Method;
+import com.mantraideas.simplehttp.datamanager.dmmodel.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +98,10 @@ public class HTTPManager {
 
     public void POSTRequest(String endpoint, Map<String, String> parameters, IOnRequest success_callback, IOnRequest error_callback, Context context) {
         this.sendHTTPRequest(endpoint, parameters, Request.Method.POST, success_callback, error_callback, context);
+    }
+
+    public void DELETERequest(String endpoint, IOnRequest success_callback, IOnRequest error_callback, Context context) {
+        this.sendHTTPRequest(endpoint, new HashMap<>(), Request.Method.DELETE, success_callback, error_callback, context);
     }
 
     public void GETRequest(String endpoint, IOnRequest success_callback, IOnRequest error_callback, Context context) {

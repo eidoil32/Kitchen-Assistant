@@ -16,6 +16,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -23,12 +24,14 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
+import com.kitchas.kitchenassistant.activities.EditRecipeActivity;
 import com.kitchas.kitchenassistant.activities.MainActivity;
 import com.kitchas.kitchenassistant.activities.PersonalAssistantActivity;
 import com.kitchas.kitchenassistant.activities.adapters.FullRecipeDetailAdapter;
 import com.kitchas.kitchenassistant.assistant.models.CustomPair;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.user.User;
+import com.kitchas.kitchenassistant.utils.Settings;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.callbacks.GeneralCallback;
 
@@ -85,27 +88,53 @@ public class RecipeViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         view.setBackgroundColor(Color.WHITE);
         if (this.recipe == null) {
-            ProgressDialog progress = Tools.showLoading(view.getContext());
-            Recipe.loadRecipeByID(this.recipe_id, this.getContext(), _recipe -> {
-                if (_recipe instanceof Recipe) {
-                    Recipe recipe = (Recipe) _recipe;
-                    loadRecipe(recipe);
-
-                    User user = User.getInstance(view.getContext());
-                    user.saveRecipeToLastViewed(view.getContext(), recipe.getId());
-                    HomeFragment.addNew(recipe);
-                    progress.dismiss();
-                }
-            }, error -> {
-                System.out.println("Error loading recipe");
-                System.out.println(error);
-            });
+            this.getRecipeData();
         } else {
             loadRecipe(this.recipe);
         }
     }
 
+    private void getRecipeData() {
+        ProgressDialog progress = Tools.showLoading(this.getContext());
+        Recipe.loadRecipeByID(this.recipe_id, this.getContext(), _recipe -> {
+            if (_recipe instanceof Recipe) {
+                Recipe recipe = (Recipe) _recipe;
+                loadRecipe(recipe);
+                User user = User.getInstance(this.getContext());
+                user.saveRecipeToLastViewed(this.getContext(), recipe.getId());
+                HomeFragment.addNew(recipe);
+                progress.dismiss();
+            }
+        }, error -> {
+            System.out.println("Error loading recipe");
+            System.out.println(error);
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Settings.EDIT_RECIPE) {
+            if (resultCode == Activity.RESULT_OK) {
+                getRecipeData();
+            }
+        }
+    }
+
     private void loadRecipe(Recipe recipe) {
+        if (recipe.getCreator().getId().equals(User.getInstance(this.listener).getId())) {
+            ImageView edit_btn = this.listener.findViewById(R.id.view_recipe_edit);
+            edit_btn.setVisibility(View.VISIBLE);
+            edit_btn.setOnClickListener(v -> {
+                recipe.setEditMode();
+                Intent intent = new Intent(listener, EditRecipeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                intent.putExtra("recipe", recipe);
+                startActivityForResult(intent, Settings.EDIT_RECIPE);
+            });
+        }
+
         TextView title = (TextView) this.listener.findViewById(R.id.view_recipe_title);
         TextView description = (TextView) this.listener.findViewById(R.id.view_recipe_description);
         ImageView image = (ImageView) this.listener.findViewById(R.id.view_recipe_image);

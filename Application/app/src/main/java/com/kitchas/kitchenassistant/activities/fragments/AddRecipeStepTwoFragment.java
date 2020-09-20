@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,20 +25,27 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
+import com.kitchas.kitchenassistant.activities.EditRecipeActivity;
 import com.kitchas.kitchenassistant.activities.adapters.FullRecipeDetailAdapter;
 import com.kitchas.kitchenassistant.activities.adapters.IngredientAdapter;
 import com.kitchas.kitchenassistant.activities.adapters.InstructionAdapter;
+import com.kitchas.kitchenassistant.activities.helpers.OnSwipeTouchListener;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Ingredient;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Tag;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Units;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Instructions;
 import com.kitchas.kitchenassistant.assistant.models.recipe.instructions.Step;
+import com.kitchas.kitchenassistant.utils.GeneralException;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.model.ChipInterface;
@@ -45,8 +53,10 @@ import com.pchmn.materialchips.model.ChipInterface;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -55,17 +65,25 @@ public class AddRecipeStepTwoFragment extends Fragment {
     private ImageView image;
     private Recipe recipe_base;
     final private List<String> tags = new LinkedList<>();
-    final private List<Ingredient> ingredients  = new LinkedList<>();
-    final private List<Step> instructions_list = new LinkedList<>();
+    final private List<Tag> old_tags_list = new LinkedList<>();
+    final private List<Ingredient> ingredients  = new LinkedList<>() , old_ingredients_list = new LinkedList<>();
+    final private List<Step> instructions_list = new LinkedList<>(), old_instructions_list = new LinkedList<>();
+    private IngredientAdapter ingredients_adapter;
+    private InstructionAdapter instructions_adapter;
 
     // activity elements
     private ChipsInput tags_chip_input;
     private Button add_instruction, add_ingredients, finish;
-    private ListView ingredients_listView, instructions_listView;
+    private SwipeMenuListView ingredients_listView, instructions_listView;
 
     public AddRecipeStepTwoFragment(JSONObject recipe_base) {
         super();
         this.recipe_base = Recipe.fetchBasic(recipe_base);
+    }
+
+    public AddRecipeStepTwoFragment(Recipe recipe_base) {
+        super();
+        this.recipe_base = recipe_base;
     }
 
     @Override
@@ -98,6 +116,45 @@ public class AddRecipeStepTwoFragment extends Fragment {
         this.instructions_listView = this.listener.findViewById(R.id.create_recipe_step_2_instructions_list);
 
         this.setChipSettings();
+        if (this.recipe_base.isInEditMode()) {
+            SwipeMenuCreator creator = menu -> {
+                SwipeMenuItem deleteItem = new SwipeMenuItem(listener);
+                deleteItem.setBackground(R.color.white);
+                deleteItem.setWidth(90);
+                deleteItem.setIcon(R.drawable.ic_baseline_delete_24);
+                menu.addMenuItem(deleteItem);
+            };
+            this.instructions_listView.setMenuCreator(creator);
+            this.instructions_listView.setOnMenuItemClickListener((position, menu, index) -> {
+                this.instructions_list.remove(position);
+                this.instructions_adapter.notifyDataSetChanged();
+                return false;
+            });
+
+            creator = menu -> {
+                SwipeMenuItem deleteItem = new SwipeMenuItem(listener);
+                deleteItem.setBackground(R.color.white);
+                deleteItem.setWidth(90);
+                deleteItem.setIcon(R.drawable.ic_baseline_delete_24);
+                menu.addMenuItem(deleteItem);
+            };
+            this.ingredients_listView.setMenuCreator(creator);
+            this.ingredients_listView.setOnMenuItemClickListener((position, menu, index) -> {
+                this.ingredients.remove(position);
+                this.ingredients_adapter.notifyDataSetChanged();
+                return false;
+            });
+
+            this.instructions_list.addAll(this.recipe_base.getInstructions().getSteps());
+            this.old_instructions_list.addAll(this.recipe_base.getInstructions().getSteps());
+            this.ingredients.addAll(this.recipe_base.getIngredients());
+            this.old_ingredients_list.addAll(this.recipe_base.getIngredients());
+            this.old_tags_list.addAll(this.recipe_base.getTags());
+            this.recipe_base.getTags().forEach(tag -> {
+                tags_chip_input.addChip(tag.getTitle(), tag.getTitle());
+            });
+        }
+
         this.setAddInstruction();
         this.setAddIngredients();
         this.setFinish();
@@ -112,18 +169,31 @@ public class AddRecipeStepTwoFragment extends Fragment {
             recipe_base.setInstructions(instructions);
             recipe_base.setIngredients(ingredients);
 
-            recipe_base.save(this.listener, response -> {
-                System.out.println(response);
-                ((AddRecipeActivity) this.listener).endAddRecipeEvent(this.recipe_base.getId());
-            }, error -> {
-                Toast.makeText(this.listener, R.string.CREATE_RECIPE_FAILED, Toast.LENGTH_SHORT).show();
-            });
+            Map<String, Object> old_data = new HashMap<>();
+            old_data.put("instructions", old_instructions_list);
+            old_data.put("ingredients", old_ingredients_list);
+            old_data.put("tags", old_tags_list);
+
+            if (recipe_base.isInEditMode()) {
+                recipe_base.update(this.listener, old_data, response -> {
+                    ((EditRecipeActivity) this.listener).endEdit(this.recipe_base.getId());
+                }, error -> {
+                    Toast.makeText(this.listener, R.string.EDIT_RECIPE_FAILED, Toast.LENGTH_SHORT).show();
+                });
+            } else {
+                recipe_base.save(this.listener, response -> {
+                    ((AddRecipeActivity) this.listener).endAddRecipeEvent(this.recipe_base.getId());
+                }, error -> {
+                    Toast.makeText(this.listener, R.string.CREATE_RECIPE_FAILED, Toast.LENGTH_SHORT).show();
+                });
+            }
+
         });
     }
 
     private void setAddIngredients() {
-        final IngredientAdapter list_adapter = new IngredientAdapter(this.listener, R.layout.adapter_ingredient, this.ingredients);
-        this.ingredients_listView.setAdapter(list_adapter);
+        this.ingredients_adapter = new IngredientAdapter(this.listener, R.layout.adapter_ingredient, this.ingredients);
+        this.ingredients_listView.setAdapter(ingredients_adapter);
         this.add_ingredients.setOnClickListener(view -> {
             final String[] unit_selected = {null};
             View inputTextView = LayoutInflater
@@ -183,7 +253,7 @@ public class AddRecipeStepTwoFragment extends Fragment {
                                 Units.valueOf(unit_selected[0]),
                                 ingredients.size() + 1);
                         ingredients.add(ingredient);
-                        list_adapter.notifyDataSetChanged();
+                        ingredients_adapter.notifyDataSetChanged();
                         dialog.dismiss();
                     }
                 });
@@ -196,8 +266,8 @@ public class AddRecipeStepTwoFragment extends Fragment {
     }
 
     private void setAddInstruction() {
-        final InstructionAdapter adapter = new InstructionAdapter(this.listener, R.layout.adapter_instruction, this.instructions_list);
-        this.instructions_listView.setAdapter(adapter);
+        this.instructions_adapter = new InstructionAdapter(this.listener, R.layout.adapter_instruction, this.instructions_list);
+        this.instructions_listView.setAdapter(instructions_adapter);
 
         this.add_instruction.setOnClickListener(view -> {
             View inputTextView = LayoutInflater
@@ -231,7 +301,7 @@ public class AddRecipeStepTwoFragment extends Fragment {
                             }
                             Step step = new Step(description.getText().toString(), _special_notes, Integer.parseInt(time.getText().toString()));
                             instructions_list.add(step);
-                            adapter.notifyDataSetChanged();
+                            instructions_adapter.notifyDataSetChanged();
                             dialog.dismiss();
                         }
                     }

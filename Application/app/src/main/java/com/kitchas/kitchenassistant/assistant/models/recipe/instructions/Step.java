@@ -13,6 +13,7 @@ public class Step implements Serializable {
     private String description;
     private String special_notes;
     private int time;
+    private String id;
 
     public Step(String description, String special_notes, int time) {
         this.description = description;
@@ -20,10 +21,20 @@ public class Step implements Serializable {
         this.time = time;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public static Step loadFromJSON(JSONObject json) throws JSONException {
-        return new Step(JSONHelper.tryString(json,"description"),
+        Step step = new Step(JSONHelper.tryString(json,"description"),
                 JSONHelper.tryString(json,"specialNotes"),
                 JSONHelper.tryInt(json,"time"));
+        step.setId(json.getString("_id"));
+        return step;
     }
 
     public int getTime() {

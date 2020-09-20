@@ -14,4 +14,8 @@ public class RecipeUser implements Serializable {
     public RecipeUser(String id) {
         this.id = id;
     }
+
+    public String getId() {
+        return this.id;
+    }
 }

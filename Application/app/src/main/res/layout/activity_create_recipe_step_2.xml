@@ -49,7 +49,7 @@
         app:layout_constraintStart_toEndOf="@+id/create_recipe_step_2_ingredients_title"
         app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_title" />
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/create_recipe_step_2_ingredients_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -58,7 +58,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_add_ingredients">
 
-    </ListView>
+    </com.baoyz.swipemenulistview.SwipeMenuListView>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline19"
@@ -74,7 +74,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="450dp" />
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/create_recipe_step_2_instructions_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -83,7 +83,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_add_instructions">
 
-    </ListView>
+    </com.baoyz.swipemenulistview.SwipeMenuListView>
 
     <TextView
         android:id="@+id/create_recipe_step_2_instructions_title"

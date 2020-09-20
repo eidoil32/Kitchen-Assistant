@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.Request;
 import com.kitchas.kitchenassistant.R;
@@ -42,6 +43,7 @@ public class Recipe implements Serializable {
     private long edate, adate;
     private int total_time; //total time in seconds
     private String image;
+    private boolean edit_mode = false;
 
     private static final long serialVersionUID = 160920L;
 
@@ -83,9 +85,13 @@ public class Recipe implements Serializable {
             throw new GeneralException("EMPTY_TAGS");
         } else if (description.isEmpty()) {
             throw new GeneralException("EMPTY_DESCRIPTION");
-        } else if (!instructions.isEmpty()) {
+        } else if (instructions.isEmpty()) {
             throw new GeneralException("EMPTY_INSTRUCTIONS");
         }
+    }
+
+    public boolean isInEditMode() {
+        return this.edit_mode;
     }
 
     public void addIngredient(Ingredient ingredient) {
@@ -413,7 +419,8 @@ public class Recipe implements Serializable {
                     if (response_object instanceof JSONArray) {
                         fetchRecipesJSONArray((JSONArray) response_object, success_callback);
                     }
-                }, error -> { }, context);
+                }, error -> {
+                }, context);
     }
 
     @Override
@@ -428,5 +435,20 @@ public class Recipe implements Serializable {
     @Override
     public int hashCode() {
         return this.id.hashCode();
+    }
+
+    public void setEditMode() {
+        this.edit_mode = true;
+    }
+
+    public void update(Context context, Map<String, Object> old_data, IOnRequest success_callback, IOnRequest error_callback) {
+        List<Tag> tags = (List<Tag>) old_data.get("tags");
+        List<Ingredient> ingredients = (List<Ingredient>) old_data.get("ingredients");
+        List<Step> instructions = (List<Step>) old_data.get("instructions");
+
+        Tag.updateRecipe(context, this.id, this.tags, tags);
+        Ingredient.updateRecipe(context, this.id, this.ingredients, ingredients);
+        Instructions.updateRecipe(context, this.id, this.instructions.getSteps(), instructions);
+        success_callback.onResponse(new JSONObject());
     }
 }
