@@ -22,7 +22,12 @@ public abstract class TextToSpeechManager implements TextToSpeech.OnInitListener
         checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         activity.startActivityForResult(checkIntent, ENGINE_REQUEST);
     }
-
+    public boolean isSpeaking(){
+        if(textToSpeech != null){
+            return textToSpeech.isSpeaking();
+        }
+        return true;
+    }
     public abstract String getText();
 
     public void preformSpeak(int resultCode, AppCompatActivity activity) {
