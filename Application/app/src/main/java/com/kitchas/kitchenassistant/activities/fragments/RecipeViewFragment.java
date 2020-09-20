@@ -166,10 +166,12 @@ public class RecipeViewFragment extends Fragment {
         });
         description.setText(recipe.getDescription());
         ListView full_details = this.listener.findViewById(R.id.view_recipe_list_view);
-        List<CustomPair<String, String>> details = new LinkedList<>();
-        details.add(new CustomPair<String, String>(this.listener.getString(R.string.INGREDIENTS), recipe.printIngredients()));
-        details.add(new CustomPair<String, String>(this.listener.getString(R.string.STEP), recipe.printSteps()));
-        BaseAdapter adapter = new FullRecipeDetailAdapter(this.listener, R.layout.adapter_view_recipe_full, details);
+        List<String> recipe_details = new LinkedList<>();
+        recipe_details.add(this.listener.getString(R.string.INGREDIENTS));
+        recipe_details.addAll(recipe.printIngredients());
+        recipe_details.add(this.listener.getString(R.string.STEP));
+        recipe_details.addAll(recipe.printSteps());
+        ArrayAdapter adapter = new ArrayAdapter(this.listener, android.R.layout.simple_list_item_1, recipe_details);
         full_details.setAdapter(adapter);
         TextView total_time = (TextView) this.listener.findViewById(R.id.view_recipe_total_time_text);
         total_time.setText(recipe.getTotalTimeCook());

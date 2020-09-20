@@ -384,16 +384,25 @@ public class Recipe implements Serializable {
                 context);
     }
 
-    public String printSteps() {
-        return this.instructions.printSteps();
+    public List<String> printSteps() {
+        List<String> strings = new LinkedList<>();
+        int i = 1;
+        for (Step step : this.instructions.getSteps()) {
+            if (step.getSpecial_notes() != null && !step.getSpecial_notes().isEmpty()) {
+                strings.add(String.format("%d. %s (%s)\n", i++, step.getDescription(), step.getSpecial_notes()));
+            } else {
+                strings.add(String.format("%d. %s\n", i++, step.getDescription()));
+            }
+        }
+        return strings;
     }
 
-    public String printIngredients() {
-        StringBuilder string = new StringBuilder();
+    public List<String> printIngredients() {
+        List<String> ingredients = new LinkedList<>();
         for (Ingredient ingredient : this.ingredients) {
-            string.append(ingredient.toString());
+            ingredients.add(ingredient.toString());
         }
-        return string.toString();
+        return ingredients;
     }
 
     public void save(Context context, IOnRequest success_callback, IOnRequest error_callback) {
