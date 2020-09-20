@@ -2,7 +2,6 @@ package com.kitchas.kitchenassistant.activities.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -22,11 +21,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.kitchas.kitchenassistant.utils.requests.HTTPManager;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,12 +75,12 @@ public class AddRecipeStepOneFragment extends Fragment {
             }
 
             String recipe_title = null, recipe_description = null;
-            if (title.getEditText() != null) {
+            if (title.getEditText() != null  && !title.getEditText().getText().toString().equals("")) {
                 recipe_title = title.getEditText().getText().toString();
             } else {
                 title.setError(getString(R.string.EMPTY_TITLE));
             }
-            if (description.getEditText() != null) {
+            if (description.getEditText() != null && !description.getEditText().getText().toString().equals("")) {
                 recipe_description = description.getEditText().getText().toString();
             } else {
                 description.setError(getString(R.string.EMPTY_DESCRIPTION));
@@ -94,8 +92,9 @@ public class AddRecipeStepOneFragment extends Fragment {
                 parameters.put("description", recipe_description);
                 parameters.put("adate", String.valueOf(Tools.getCurrentTimeStamp()));
                 HTTPManager.getInstance().POSTMultipartRequest("user/recipes", parameters, bitmap, response -> {
+                    ((AddRecipeActivity) this.listener).hideBackBtn();
                     FragmentTransaction _fragmentTransaction = ((FragmentActivity) view.getContext()).getSupportFragmentManager().beginTransaction();
-                    _fragmentTransaction.replace(R.id.main_activity_framelayout, new AddRecipeStepTwoFragment(response));
+                    _fragmentTransaction.replace(R.id.add_recipe_activity_fragment, new AddRecipeStepTwoFragment(response));
                     _fragmentTransaction.commit();
                 }, error -> {
                     AlertDialog dialog = new MaterialAlertDialogBuilder(view.getContext())

@@ -73,10 +73,7 @@ public class HomeFragment extends Fragment
         ProgressDialog progress = Tools.showLoading(this.listener, getString(R.string.LOADING_MY_RECIPES));
         Recipe.fetchUserRecipes(this.listener, recipes -> {
             List<Recipe> response_recipes = (List<Recipe>) recipes;
-            if (recipeList == null) {
-                recipeList = new HashSet<>();
-            }
-            recipeList.addAll(response_recipes);
+            recipeList = new HashSet<>(response_recipes);
             loadLastViewedRecipes(progress);
         });
     }

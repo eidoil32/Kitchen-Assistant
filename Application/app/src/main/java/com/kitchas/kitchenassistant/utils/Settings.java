@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Settings {
+    public static final int ADD_RECIPE_FINISH_OK = 10001;
     public static final String ENV = "PROD";
     public static final int CAMERA_PERMISSION_REQUEST = 0;
     public static final Map<String, String> PERMISSION_ARRAY = new HashMap<>();

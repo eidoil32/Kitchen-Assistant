@@ -28,6 +28,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.AddRecipeActivity;
 import com.kitchas.kitchenassistant.activities.adapters.FullRecipeDetailAdapter;
 import com.kitchas.kitchenassistant.activities.adapters.IngredientAdapter;
 import com.kitchas.kitchenassistant.activities.adapters.InstructionAdapter;
@@ -112,9 +113,8 @@ public class AddRecipeStepTwoFragment extends Fragment {
             recipe_base.setIngredients(ingredients);
 
             recipe_base.save(this.listener, response -> {
-                FragmentTransaction fragmentTransaction = this.listener.getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.main_activity_framelayout, new RecipeViewFragment(recipe_base));
-                fragmentTransaction.commit();
+                System.out.println(response);
+                ((AddRecipeActivity) this.listener).endAddRecipeEvent(this.recipe_base.getId());
             }, error -> {
                 Toast.makeText(this.listener, R.string.CREATE_RECIPE_FAILED, Toast.LENGTH_SHORT).show();
             });
@@ -134,7 +134,7 @@ public class AddRecipeStepTwoFragment extends Fragment {
             final TextInputLayout units = inputTextView.findViewById(R.id.dialog_ingredients_unit);
             final AutoCompleteTextView units_selector = inputTextView.findViewById(R.id.dialog_ingredients_unit_selector);
             final TextInputEditText amount = inputTextView.findViewById(R.id.dialog_ingredients_amount_edit);
-            final TextInputEditText[] inputs = {description, title, amount};
+            final TextInputEditText[] inputs = {title, amount};
             AlertDialog dialog = new MaterialAlertDialogBuilder(view.getContext())
                     .setTitle(R.string.ADD_NEW_INGREDIENT)
                     .setPositiveButton(R.string.BTN_ADD, null)
@@ -179,7 +179,7 @@ public class AddRecipeStepTwoFragment extends Fragment {
                         Ingredient ingredient = new Ingredient(
                                 title.getText().toString(),
                                 description.getText().toString(),
-                                Integer.parseInt(amount.getText().toString()),
+                                Float.parseFloat(amount.getText().toString()),
                                 Units.valueOf(unit_selected[0]),
                                 ingredients.size() + 1);
                         ingredients.add(ingredient);
@@ -261,7 +261,7 @@ public class AddRecipeStepTwoFragment extends Fragment {
                 int text_size = text.length();
                 if (text_size > 1) {
                     if (text.charAt(text_size - 1) == ' ') {
-                        String tag = text.subSequence(0, text_size - 2).toString();
+                        String tag = text.subSequence(0, text_size - 1).toString().trim();
                         tags_chip_input.addChip(tag, tag);
                     }
                 }

@@ -43,7 +43,7 @@ public class Instructions implements Serializable {
         StringBuilder steps = new StringBuilder();
         int i = 1;
         for (Step step : this.steps) {
-            if (step.getSpecial_notes() != null) {
+            if (step.getSpecial_notes() != null && !step.getSpecial_notes().isEmpty()) {
                 steps.append(String.format("%d. %s (%s)\n", i++, step.getDescription(), step.getSpecial_notes()));
             } else {
                 steps.append(String.format("%d. %s\n", i++, step.getDescription()));

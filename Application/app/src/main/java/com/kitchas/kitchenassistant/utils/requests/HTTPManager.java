@@ -121,7 +121,7 @@ public class HTTPManager {
                         error_callback.onResponse(Settings.UNKNOWN_ERROR);
                     }
                 },
-                error -> Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show()) {
+                error -> error_callback.onResponse(Settings.UNKNOWN_ERROR)) {
             @Override
             protected Map<String, String> getParams() {
                 return parameters;
@@ -129,7 +129,11 @@ public class HTTPManager {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return setHeaders();
+                Map<String, String> headers = new HashMap<>();
+                if (token != null) {
+                    headers.put("Authorization", "Bearer " + token.getToken());
+                }
+                return headers;
             }
 
             @Override

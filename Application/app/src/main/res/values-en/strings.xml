@@ -44,7 +44,7 @@
     <string name="SET_NAME_INPUT_HELPER">Or we can call you %1$s?</string>
     <string name="SET_NAME_DIALOG_CONTENT">How do you want us to call you?</string>
     <string name="CANNOT_RATE_TWICE">You cannot rate the same recipe twice</string>
-    <string name="STEP">Step</string>
+    <string name="STEP">Steps</string>
     <string name="INGREDIENTS">Ingredients</string>
     <string name="recipe_title">Recipe Title</string>
     <string name="UPLOAD_IMAGE">UPLOAD IMAGE</string>
@@ -94,4 +94,6 @@
     <string name="HOME_RECIPES" />
     <string name="SEARCH_RESULTS_TITLE">Search results</string>
     <string name="FAVORITES_NO_RECIPES">it appears that you haven\'t like any recipe, you can double click on any recipe to added to your favorite.</string>
+    <string name="LOGO">Kitchen Assistant</string>
+    <string name="BACK_BTN">Back</string>
 </resources>

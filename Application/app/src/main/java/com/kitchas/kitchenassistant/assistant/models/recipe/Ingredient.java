@@ -9,11 +9,11 @@ import java.util.List;
 
 public class Ingredient implements Serializable {
     private String title, description;
-    private int amount;
+    private float amount;
     private Units unit;
     private int priority;
 
-    public Ingredient(String title, String description, int amount, Units unit, int priority) {
+    public Ingredient(String title, String description, float amount, Units unit, int priority) {
         this.title = title;
         this.description = description;
         this.amount = amount;
@@ -29,7 +29,7 @@ public class Ingredient implements Serializable {
         return new Ingredient(
                 json.getString("title"),
                 json.getString("description"),
-                json.getInt("amount"),units,
+                Float.parseFloat(json.getString("amount")),units,
                 json.getInt("priority"));
     }
 
@@ -81,7 +81,7 @@ public class Ingredient implements Serializable {
         this.description = description;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 

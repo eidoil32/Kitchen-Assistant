@@ -1,5 +1,6 @@
 package com.kitchas.kitchenassistant.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
@@ -11,17 +12,20 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.kitchas.kitchenassistant.R;
+import com.kitchas.kitchenassistant.activities.fragments.RecipeViewFragment;
 import com.kitchas.kitchenassistant.activities.fragments.SearchResults;
 import com.kitchas.kitchenassistant.activities.fragments.TabAdapter;
 import com.kitchas.kitchenassistant.assistant.models.search.Search;
 import com.kitchas.kitchenassistant.assistant.motiondetection.MotionDetector;
 import com.kitchas.kitchenassistant.assistant.user.User;
+import com.kitchas.kitchenassistant.utils.Settings;
 import com.kitchas.kitchenassistant.utils.Tools;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
@@ -38,11 +42,18 @@ public class MainActivity extends BaseActivity
     private ViewPager viewPager;
     private static FrameLayout frameLayout;
     private ImageView micBtn;
+    private static FragmentTransaction fragmentTransaction;
 
     public static void showRecipeView() {
         fab.hide();
         frameLayout.setVisibility(View.VISIBLE);
         frameLayout.bringToFront();
+    }
+
+    public static void showRecipeView(String recipe_id) {
+        showRecipeView();
+        fragmentTransaction.replace(R.id.main_activity_recipe_view_frame, new RecipeViewFragment(recipe_id));
+        fragmentTransaction.commit();
     }
 
     public static void hideRecipeView() {
@@ -52,7 +63,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if (getIntent().getBooleanExtra("USER_LOGGED_OUT", false)) {
             finish();
         }
@@ -129,7 +140,7 @@ public class MainActivity extends BaseActivity
         fab.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, AddRecipeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-            startActivity(intent);
+            startActivityForResult(intent, Settings.ADD_RECIPE_FINISH_OK);
         });
         setSearchBarActions();
     }
@@ -146,6 +157,20 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case Settings.ADD_RECIPE_FINISH_OK:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        String id = data.getStringExtra("recipe_id");
+                        showRecipeView(id);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
         if (requestCode == this.getSpeechCode()) {
             listenToSpeech = false;
         }
@@ -208,7 +233,11 @@ public class MainActivity extends BaseActivity
             fab.show();
             frameLayout.setVisibility(View.GONE);
         } else {
-            super.onBackPressed();
+            if (this.viewPager.getCurrentItem() == TabAdapter.HOME_TAB_NO) {
+                finishAffinity();
+            } else {
+                this.viewPager.setCurrentItem(TabAdapter.HOME_TAB_NO);
+            }
         }
     }
 }

@@ -28,35 +28,35 @@
         tools:text="RECIPE TITLE" />
 
     <TextView
-        android:id="@+id/create_recipe_step_2_instructions_title"
+        android:id="@+id/create_recipe_step_2_ingredients_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/CREATE_RECIPE_2_INSTRUCTIONS"
+        android:text="@string/CREATE_RECIPE_2_INGREDIENTS"
         android:textAlignment="textStart"
-        app:layout_constraintBottom_toBottomOf="@+id/create_recipe_step_2_add_instructions"
+        app:layout_constraintBottom_toBottomOf="@+id/create_recipe_step_2_add_ingredients"
         app:layout_constraintEnd_toStartOf="@+id/guideline20"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_title" />
 
     <Button
-        android:id="@+id/create_recipe_step_2_add_instructions"
+        android:id="@+id/create_recipe_step_2_add_ingredients"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/BTN_ADD"
         app:icon="@drawable/ic_baseline_add_24"
         app:iconSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/create_recipe_step_2_instructions_title"
+        app:layout_constraintStart_toEndOf="@+id/create_recipe_step_2_ingredients_title"
         app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_title" />
 
     <ListView
-        android:id="@+id/create_recipe_step_2_instructions_list"
+        android:id="@+id/create_recipe_step_2_ingredients_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline19"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_add_instructions">
+        app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_add_ingredients">
 
     </ListView>
 
@@ -75,24 +75,24 @@
         app:layout_constraintGuide_begin="450dp" />
 
     <ListView
-        android:id="@+id/create_recipe_step_2_ingredients_list"
+        android:id="@+id/create_recipe_step_2_instructions_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline21"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_add_ingredients">
+        app:layout_constraintTop_toBottomOf="@+id/create_recipe_step_2_add_instructions">
 
     </ListView>
 
     <TextView
-        android:id="@+id/create_recipe_step_2_ingredients_title"
+        android:id="@+id/create_recipe_step_2_instructions_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:orientation="vertical"
-        android:text="@string/CREATE_RECIPE_2_INGREDIENTS"
-        app:layout_constraintBottom_toBottomOf="@+id/create_recipe_step_2_add_ingredients"
+        android:text="@string/CREATE_RECIPE_2_INSTRUCTIONS"
+        app:layout_constraintBottom_toBottomOf="@+id/create_recipe_step_2_add_instructions"
         app:layout_constraintEnd_toStartOf="@+id/guideline20"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideline19" />
@@ -107,7 +107,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline21" />
 
     <Button
-        android:id="@+id/create_recipe_step_2_add_ingredients"
+        android:id="@+id/create_recipe_step_2_add_instructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="150"
@@ -115,7 +115,7 @@
         app:icon="@drawable/ic_baseline_add_24"
         app:iconSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/create_recipe_step_2_ingredients_title"
+        app:layout_constraintStart_toEndOf="@+id/create_recipe_step_2_instructions_title"
         app:layout_constraintTop_toBottomOf="@+id/guideline19" />
 
     <Button
@@ -125,7 +125,7 @@
         android:layout_marginBottom="16dp"
         android:text="@string/BTN_FINISH"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/create_recipe_step_2_add_ingredients" />
+        app:layout_constraintEnd_toEndOf="@+id/create_recipe_step_2_add_instructions" />
 
     <com.pchmn.materialchips.ChipsInput
         android:id="@+id/create_recipe_step_2_chip_list"

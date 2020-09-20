@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/adapter_last_recipe_constraint"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/adapter_last_recipe_card"
@@ -82,18 +83,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline13" />
 
-            <RatingBar
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
                 android:id="@+id/adapter_last_recipe_rating_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:scaleX=".4"
-                android:scaleY=".4"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:numStars="5"
+                android:scaleX="1"
+                android:scaleY="1"
                 android:transformPivotX="0dp"
                 android:transformPivotY="0dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline16"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/adapter_last_recipe_title"
-                app:layout_constraintTop_toBottomOf="@+id/adapter_last_recipe_title" />
+                app:layout_constraintTop_toBottomOf="@+id/adapter_last_recipe_title"
+                app:mrb_fillBackgroundStars="true"
+                app:mrb_progressTint="@color/colorPrimary" />
 
             <TextView
                 android:id="@+id/adapter_last_recipe_description"
@@ -103,15 +107,18 @@
                 app:layout_constraintBottom_toTopOf="@+id/guideline15"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/adapter_last_recipe_rating_bar"
-                app:layout_constraintTop_toTopOf="@+id/guideline17" />
+                app:layout_constraintTop_toBottomOf="@+id/adapter_last_recipe_rating_bar" />
 
             <TextView
                 android:id="@+id/adapter_last_recipe_rating_text"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/guideline17"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="1dp"
+                app:layout_constraintBottom_toBottomOf="@+id/adapter_last_recipe_rating_bar"
                 app:layout_constraintStart_toStartOf="@+id/guideline16"
-                app:layout_constraintTop_toBottomOf="@+id/adapter_last_recipe_title" />
+                app:layout_constraintTop_toBottomOf="@+id/adapter_last_recipe_title"
+                tools:text="5/5" />
 
             <ImageView
                 android:id="@+id/adapter_last_recipe_clock_time_icon"

@@ -3,7 +3,9 @@ package com.kitchas.kitchenassistant.activities.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
@@ -50,6 +52,7 @@ public class SearchResults extends BaseActivity
         search.searchRecipes(this.search_query, true, (results) -> {
             this.recipes_results = results;
             this.loadRecipes();
+            this.swipe_refresh_layout.setRefreshing(false);
         }, error -> {}, ++page);
     }
 
@@ -64,6 +67,13 @@ public class SearchResults extends BaseActivity
         this.recipes_list_view = findViewById(R.id.search_results_list_view);
         this.swipe_refresh_layout = findViewById(R.id.search_results_swipe);
         this.swipe_refresh_layout.setOnRefreshListener(this);
+        ImageView back_btn = findViewById(R.id.search_results_back);
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         ProgressDialog progress = Tools.showLoading(this, "We searching in lightning speed! please wait..");
         Search search = new Search(this);
         search.searchRecipes(this.search_query, true, (results) -> {
@@ -87,7 +97,6 @@ public class SearchResults extends BaseActivity
             case BOTTOM:
                 this.swipe_refresh_layout.setRefreshing(true);
                 this.loadMoreRecipes();
-                this.swipe_refresh_layout.setRefreshing(false);
                 break;
         }
     }

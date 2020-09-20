@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -121,6 +122,18 @@ public class RecipeViewFragment extends Fragment {
         TextView rating_value = (TextView) this.listener.findViewById(R.id.view_recipe_rating_text);
         rating_value.setText(String.format("%.1f/5", recipe.getRate()));
         title.setText(recipe.getTitle());
+        rating_bar.setOnRatingBarChangeListener((ratingBar, rate, by_user) -> {
+            if (by_user) {
+                recipe.rate(rate, this.listener, response -> {
+                    float new_rate = recipe.getRate();
+                    ratingBar.setRating(new_rate);
+                    rating_value.setText(String.format("%.1f/5", recipe.getRate()));
+                }, error -> {
+                    ratingBar.setRating(recipe.getRate());
+                    Toast.makeText(this.listener, R.string.CANNOT_RATE_TWICE, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
         description.setText(recipe.getDescription());
         ListView full_details = this.listener.findViewById(R.id.view_recipe_list_view);
         List<CustomPair<String, String>> details = new LinkedList<>();

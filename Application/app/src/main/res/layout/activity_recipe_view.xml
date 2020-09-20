@@ -71,31 +71,37 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif-black"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline13" />
+            app:layout_constraintTop_toTopOf="@+id/guideline13"
+            tools:text="Recipe for example" />
 
-        <RatingBar
+        <me.zhanghai.android.materialratingbar.MaterialRatingBar
             android:id="@+id/view_recipe_rating_bar"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:scaleX=".4"
-            android:scaleY=".4"
+            android:layout_height="24dp"
+            android:scaleX="1"
+            android:scaleY="1"
             android:transformPivotX="0dp"
             android:transformPivotY="0dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/guideline12"
             app:layout_constraintEnd_toStartOf="@+id/guideline16"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/view_recipe_title"
-            app:layout_constraintTop_toBottomOf="@+id/view_recipe_title" />
+            app:layout_constraintTop_toBottomOf="@+id/view_recipe_title"
+            app:mrb_fillBackgroundStars="true"
+            app:mrb_progressTint="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/view_recipe_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:gravity="top|left"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,6 +113,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -116,10 +123,12 @@
         <TextView
             android:id="@+id/view_recipe_rating_text"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline17"
-            app:layout_constraintStart_toStartOf="@+id/guideline16"
-            app:layout_constraintTop_toBottomOf="@+id/view_recipe_title" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view_recipe_rating_bar"
+            app:layout_constraintStart_toEndOf="@+id/view_recipe_rating_bar"
+            app:layout_constraintTop_toTopOf="@+id/view_recipe_rating_bar"
+            tools:text="5/5" />
 
         <ImageView
             android:id="@+id/view_recipe_clock_time_icon"
@@ -129,8 +138,9 @@
             android:contentDescription="@string/RECIPE_IMAGE"
             android:src="@drawable/clock_time_icon"
             android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/view_recipe_rating_bar"
-            app:layout_constraintTop_toBottomOf="@+id/view_recipe_title" />
+            app:layout_constraintBottom_toBottomOf="@+id/view_recipe_rating_bar"
+            app:layout_constraintStart_toEndOf="@+id/view_recipe_rating_text"
+            app:layout_constraintTop_toTopOf="@+id/view_recipe_rating_bar" />
 
         <TextView
             android:id="@+id/view_recipe_total_time_text"
