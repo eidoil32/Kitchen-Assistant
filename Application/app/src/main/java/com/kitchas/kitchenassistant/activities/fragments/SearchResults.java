@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -64,6 +65,8 @@ public class SearchResults extends BaseActivity
 
         Intent intent = getIntent();
         this.search_query = intent.getStringExtra("query");
+        TextView search_title = findViewById(R.id.search_results_title);
+        search_title.setText(String.format(getString(R.string.SEARCH_RESULTS_TITLE_FOR), search_query));
         this.recipes_list_view = findViewById(R.id.search_results_list_view);
         this.swipe_refresh_layout = findViewById(R.id.search_results_swipe);
         this.swipe_refresh_layout.setOnRefreshListener(this);
