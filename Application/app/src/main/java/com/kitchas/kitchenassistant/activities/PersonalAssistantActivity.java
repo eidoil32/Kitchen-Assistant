@@ -44,7 +44,7 @@ public class PersonalAssistantActivity extends BaseActivity {
             this.ingredients = recipe.getIngredients();
             this.steps = recipe.getInstructions().getSteps();
 
-            MotionDetector.ActiveMotionDetector(this, result -> activePersonalAssistantInteraction()
+            MotionDetector.ActiveMotionDetector(this, result -> activePersonalAssistantInteraction(result)
 
                     , error -> {
                         Toast.makeText(this, "Problem with motion detector!", Toast.LENGTH_LONG).show();
@@ -65,6 +65,12 @@ public class PersonalAssistantActivity extends BaseActivity {
         currentTextToSay = "Hello! let's get start cooking!";
         shower_text_view.setText(currentTextToSay);
         textToSpeechManager.speak(this, ENGINE_REQUEST_TEXT_TO_SPEECH);
+    }
+
+    public void activePersonalAssistantInteraction(boolean result) {
+        if(result){
+            activePersonalAssistantInteraction();
+        }
     }
 
     public void activePersonalAssistantInteraction() {
