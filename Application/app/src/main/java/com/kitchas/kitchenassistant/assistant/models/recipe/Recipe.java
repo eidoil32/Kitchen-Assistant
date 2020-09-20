@@ -424,4 +424,9 @@ public class Recipe implements Serializable {
 
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 }
