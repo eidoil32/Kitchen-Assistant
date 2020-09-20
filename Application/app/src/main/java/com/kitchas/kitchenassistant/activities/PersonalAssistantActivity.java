@@ -6,8 +6,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
 import com.kitchas.kitchenassistant.R;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Ingredient;
 import com.kitchas.kitchenassistant.assistant.models.recipe.Recipe;
@@ -104,10 +102,5 @@ public class PersonalAssistantActivity extends BaseActivity {
                 });
             }
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
